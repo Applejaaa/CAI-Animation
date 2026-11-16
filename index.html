@@ -1,0 +1,2795 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>บทเรียนออนไลน์ สร้างสรรค์สื่อ Animation (ว20232) | โรงเรียนพระบางวิทยา</title>
+
+  <!-- Google Fonts: Prompt & Sarabun -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- html2canvas & jsPDF for PDF Certificate -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif'],
+            sarabun: ['Sarabun', 'sans-serif'],
+          },
+          colors: {
+            brandHeader: '#0080FF',
+            brandFooter: '#0A192F',
+            brandFooterText: '#CBD5E1',
+            brandAccent: '#38BDF8',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background-color: #F0F7FF;
+      color: #0F172A;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    main {
+      flex: 1;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+    .lesson-prose h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0080FF;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .lesson-prose p {
+      margin-bottom: 0.85rem;
+      line-height: 1.75;
+      color: #334155;
+    }
+    .lesson-prose ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+      color: #334155;
+    }
+    .lesson-prose li {
+      margin-bottom: 0.4rem;
+      line-height: 1.65;
+    }
+    /* Certificate Styling (A4 Landscape Proportion: 1122px x 793px) */
+    #certificate-capture {
+      width: 1050px;
+      height: 742px;
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      position: relative;
+      font-family: 'Sarabun', 'Prompt', sans-serif;
+      color: #0f172a;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+/* Certificate Styling (Exact 1024x724 A4 Landscape Proportion) */
+    #certificate-capture {
+      width: 1024px;
+      height: 724px;
+      background-color: #ffffff;
+      position: relative;
+      font-family: 'Prompt', 'Sarabun', sans-serif;
+      color: #0f172a;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HEADER ==================== -->
+  <header style="background-color: #0080FF; color: #FFFFFF;" class="shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <!-- Brand & School Info -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-white/15 border border-white/30 flex items-center justify-center shrink-0 shadow-inner">
+            <i class="fa-solid fa-film text-2xl" style="color: #38BDF8;"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/20 text-white tracking-wide">
+                รายวิชา สร้างสรรค์สื่อ Animation
+              </span>
+              <span id="sync-badge" class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-amber-400/25 text-white border border-white/30 flex items-center gap-1.5">
+                <i class="fa-solid fa-database text-[10px]"></i>
+                <span id="sync-badge-text">พร้อมใช้งาน</span>
+              </span>
+            </div>
+            <h1 class="text-lg sm:text-xl font-bold leading-snug mt-0.5">
+              โรงเรียนพระบางวิทยา
+            </h1>
+            <p class="text-xs text-white/90">
+              กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี • สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครสวรรค์
+            </p>
+          </div>
+        </div>
+
+        <!-- User Controls -->
+        <div id="header-user-area" class="flex items-center justify-end gap-2.5">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== GLOBAL TOAST NOTIFICATION ==================== -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div id="app-root"></div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer style="background-color: #0A192F; color: #CBD5E1;" class="mt-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+        <div class="text-center sm:text-left">
+          <p class="font-semibold text-white">โรงเรียนพระบางวิทยา • สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครสวรรค์</p>
+          <p class="text-xs mt-0.5 opacity-80">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี | รายวิชา สร้างสรรค์สื่อ Animation (ว20232) (ระดับชั้นมัธยมศึกษาปีที่ 2)</p>
+        </div>
+        <div class="text-center sm:text-right">
+          <p class="font-medium" style="color: #38BDF8;">@2026 พัฒนาระบบโดย ครูหทัยชนก ตระกูลจำลอง</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL CONTAINER ==================== -->
+  <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div id="modal-box" class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 relative animate-fade-in my-8">
+      <!-- Modal content injected here -->
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION ==================== -->
+  <script>
+    /**
+     * =========================================================================
+     * การตั้งค่าเริ่มต้น (CONFIGURATION)
+     * ครูสามารถนำ URL ของ Google Apps Script Web App มาวางในตัวแปร DEFAULT_GAS_URL ด้านล่างนี้
+     * เพื่อให้นักเรียนทุกคนที่เปิดไฟล์ index.html เชื่อมต่อฐานข้อมูลอัตโนมัติทันทีโดยไม่ต้องกรอกลิงก์เอง
+     * =========================================================================
+     */
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycby637yEraphcFG261eh4oTAnNZwvfi_dH66DA0EY460eO0JmeMqDDWbmMDfXoW_Da5d/exec"; // ตัวอย่าง: "https://script.google.com/macros/s/AKfycb.../exec"
+
+    const SCHOOL_INFO = {
+      schoolName: "โรงเรียนพระบางวิทยา",
+      affiliation: "สำนักงานเขตพื้นที่การศึกษามัธยมศึกษานครสวรรค์",
+      subjectGroup: "กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี",
+      teacherName: "ครูหทัยชนก ตระกูลจำลอง",
+      subjectName: "สร้างสรรค์สื่อ Animation (ว20232)",
+      passPercentage: 80
+    };
+
+    const ADMIN_ACCOUNT = {
+      username: "admin",
+      password: "apple007",
+      name: "ครูหทัยชนก ตระกูลจำลอง",
+      role: "admin"
+    };
+
+    // ==================== ข้อมูลเริ่มต้น: รายชื่อนักเรียนตัวอย่าง ====================
+    const DEFAULT_STUDENTS = [
+      {
+        username: "67001",
+        password: "1234",
+        name: "ด.ช.ธนกฤต สร้างสรรค์",
+        classroom: "ม.3/1",
+        preScore: null,
+        preCompleted: false,
+        postScore: null,
+        postCompleted: false,
+        lessonsCompleted: [],
+        caseStudyAnswer: "",
+        certDate: ""
+      },
+      {
+        username: "67002",
+        password: "1234",
+        name: "ด.ญ.ปณิดา จินตนาการ",
+        classroom: "ม.3/1",
+        preScore: 11,
+        preCompleted: true,
+        postScore: null,
+        postCompleted: false,
+        lessonsCompleted: ["1", "2"],
+        caseStudyAnswer: "",
+        certDate: ""
+      },
+      {
+        username: "67003",
+        password: "1234",
+        name: "ด.ช.ภูริณัฐ แอนิเมชัน",
+        classroom: "ม.3/2",
+        preScore: 12,
+        preCompleted: true,
+        postScore: 18,
+        postCompleted: true,
+        lessonsCompleted: ["1", "2", "3", "4", "5"],
+        caseStudyAnswer: "สตูดิโอควรใช้ AI เป็นเพียงเครื่องมือช่วยร่างแนวคิดเบื้องต้น (Concept Art) และลดงานซ้ำซ้อน แต่ต้องให้มนุษย์เป็นผู้กำกับศิลป์ ตรวจสอบลิขสิทธิ์ของชุดข้อมูลฝึกสอน AI และไม่นำผลงานของศิลปินคนอื่นมาเลียนแบบโดยไม่ได้รับอนุญาต เพื่อให้เกิดความเป็นธรรมและรักษาคุณค่าของงานสร้างสรรค์",
+        certDate: "16 พฤศจิกายน พ.ศ. 2569"
+      },
+      {
+        username: "67004",
+        password: "1234",
+        name: "ด.ญ.กัญญาวีร์ ดิจิทัลอาร์ต",
+        classroom: "ม.3/2",
+        preScore: 10,
+        preCompleted: true,
+        postScore: 17,
+        postCompleted: true,
+        lessonsCompleted: ["1", "2", "3", "4", "5"],
+        caseStudyAnswer: "AI ช่วยให้ผลิตงานได้เร็วขึ้น แต่ไม่สามารถแทนที่อารมณ์ความรู้สึกและจินตนาการของนักแอนิเมชันได้ นักสร้างสรรค์ยุคใหม่จึงต้องพัฒนาทักษะการเล่าเรื่องควบคู่กับการใช้ AI อย่างมีจริยธรรม",
+        certDate: "16 พฤศจิกายน พ.ศ. 2569"
+      },
+      {
+        username: "67005",
+        password: "1234",
+        name: "ด.ช.วรเมธ โมชันกราฟิก",
+        classroom: "ม.3/3",
+        preScore: 9,
+        preCompleted: true,
+        postScore: 14,
+        postCompleted: true,
+        lessonsCompleted: ["1", "2", "3", "4", "5"],
+        caseStudyAnswer: "ควรเปิดเผยให้ผู้ชมทราบเมื่อมีการใช้ AI ร่วมสร้างผลงาน และเคารพสิทธิ์ของเจ้าของผลงานต้นฉบับ",
+        certDate: ""
+      }
+    ];
+
+    // ==================== ข้อมูลเริ่มต้น: บทเรียน 5 หน่วยการเรียนรู้ ====================
+    const DEFAULT_LESSONS = [
+      {
+        id: "1",
+        title: "หน่วยที่ 1: พื้นฐานนักสร้างสรรค์ดิจิทัลและจริยธรรมปัญญาประดิษฐ์",
+        subtitle: "รู้จักโลกของ Digital Creator พื้นฐานงาน Animation และการใช้ AI อย่างรับผิดชอบ",
+        duration: "20 นาที",
+        icon: "fa-wand-magic-sparkles",
+        summary: "เรียนรู้ความหมายของนักสร้างสรรค์ดิจิทัล กระบวนการสร้างงานแอนิเมชันเบื้องต้น (Pre-production, Production, Post-production) และหลักจริยธรรมพื้นฐานในการนำปัญญาประดิษฐ์ (AI) มาเป็นเครื่องมือช่วยสร้างสรรค์",
+        contentHtml: `
+          <h3>1. นักสร้างสรรค์ดิจิทัล (Digital Creator) คือใคร?</h3>
+          <p><strong>นักสร้างสรรค์ดิจิทัล (Digital Creator)</strong> คือ ผู้ที่ออกแบบ ผลิต และเผยแพร่สื่อในรูปแบบดิจิทัล เช่น ภาพเคลื่อนไหว (Animation) วิดีโอ กราฟิก อินโฟกราฟิก หรือสื่อเชิงโต้ตอบ เพื่อสื่อสารเรื่องราว ให้ความรู้ หรือสร้างความบันเทิงผ่านแพลตฟอร์มออนไลน์ต่างๆ</p>
+          <h3>2. กระบวนการสร้างสื่อ Animation เบื้องต้น 3 ขั้นตอน</h3>
+          <ul>
+            <li><strong>ขั้นเตรียมการผลิต (Pre-Production):</strong> การคิดไอเดีย เขียนบท (Script) ออกแบบตัวละคร (Character Design) และวาดสตอรี่บอร์ด (Storyboard) เพื่อวางลำดับภาพ</li>
+            <li><strong>ขั้นการผลิต (Production):</strong> การวาดภาพเคลื่อนไหว (Keyframes & In-between) การสร้างโมเดล 2D/3D การใส่เสียงพากย์และดนตรีประกอบ</li>
+            <li><strong>ขั้นหลังการผลิต (Post-Production):</strong> การตัดต่อ ใส่เอฟเฟกต์แสงสี (Compositing) และส่งออกไฟล์ (Render) เพื่อเผยแพร่</li>
+          </ul>
+          <h3>3. ปัญญาประดิษฐ์ (AI) กับบทบาทผู้ช่วยนักสร้างสรรค์</h3>
+          <p>ปัจจุบันเครื่องมือ AI (เช่น Generative AI สำหรับสร้างภาพ เสียง หรือช่วยทำ In-between) ช่วยลดระยะเวลาการทำงานที่ซ้ำซ้อนได้มาก แต่หัวใจสำคัญของงานแอนิเมชันยังคงอยู่ที่ <strong>"ความคิดสร้างสรรค์ อารมณ์ความรู้สึก และจริยธรรมของมนุษย์"</strong> ผู้สร้างสรรค์ต้องใช้ AI ในฐานะเครื่องมือเสริม ไม่ใช่การคัดลอกผลงานผู้อื่นหรือสร้างข้อมูลเท็จที่ก่อให้เกิดความเสียหาย</p>
+        `,
+        keyTakeaways: [
+          "งาน Animation แบ่งเป็น 3 ขั้นหลัก คือ Pre-Production, Production และ Post-Production",
+          "AI เป็นเครื่องมือช่วยเพิ่มประสิทธิภาพ แต่ความคิดสร้างสรรค์และการตัดสินใจเชิงจริยธรรมเป็นหน้าที่ของมนุษย์",
+          "นักสร้างสรรค์ที่ดีต้องคำนึงถึงผลกระทบต่อผู้ชมและสังคมเสมอ"
+        ],
+        isCaseStudy: false,
+        caseStudyPrompt: ""
+      },
+      {
+        id: "2",
+        title: "หน่วยที่ 2: บทบาท Digital Creator ในตลาดแรงงาน",
+        subtitle: "สำรวจตำแหน่งงานสายแอนิเมชัน สื่อดิจิทัล และทักษะที่ตลาดแรงงานต้องการ",
+        duration: "20 นาที",
+        icon: "fa-briefcase",
+        summary: "เจาะลึกอาชีพในอุตสาหกรรมแอนิเมชันและสื่อดิจิทัลยุคใหม่ ตั้งแต่ 2D/3D Animator, Storyboard Artist, Motion Graphic Designer ไปจนถึง Content Creator อิสระ",
+        contentHtml: `
+          <h3>1. ตำแหน่งงานสำคัญในอุตสาหกรรม Animation และสื่อดิจิทัล</h3>
+          <ul>
+            <li><strong>Storyboard Artist (นักวาดสตอรี่บอร์ด):</strong> แปลงบทภาพยนตร์หรือเรื่องราวให้เป็นภาพลำดับเหตุการณ์ กำหนดมุมกล้องและอารมณ์ของฉาก</li>
+            <li><strong>Character & Background Designer (นักออกแบบตัวละครและฉาก):</strong> สร้างเอกลักษณ์ของตัวละคร สีหน้า ท่าทาง และบรรยากาศโลกของเรื่อง</li>
+            <li><strong>2D / 3D Animator (นักสร้างภาพเคลื่อนไหว):</strong> ทำให้ตัวละครและวัตถุเคลื่อนไหวอย่างมีชีวิตชีวาตามหลัก 12 Principles of Animation</li>
+            <li><strong>Motion Graphic Designer (นักออกแบบโมชันกราฟิก):</strong> สร้างกราฟิกเคลื่อนไหวสำหรับโฆษณา รายการโทรทัศน์ เกม และสื่อโซเชียลมีเดีย</li>
+            <li><strong>Digital Content Creator / VTuber Creator:</strong> สร้างสรรค์คอนเทนต์และตัวละครเสมือนจริงบน YouTube, TikTok หรือแพลตฟอร์มสตรีมมิง</li>
+          </ul>
+          <h3>2. ทักษะสำคัญที่ตลาดแรงงานยุค AI ต้องการ</h3>
+          <p>ในยุคที่เทคโนโลยีเปลี่ยนแปลงรวดเร็ว ตลาดแรงงานไม่ได้มองหาเพียงคนที่ใช้โปรแกรมเก่งเท่านั้น แต่ต้องการคนที่มีทักษะผสมผสาน ดังนี้:</p>
+          <ul>
+            <li><strong>ทักษะการเล่าเรื่อง (Storytelling):</strong> การลำดับเรื่องราวให้น่าติดตามและเข้าถึงจิตใจผู้ชม</li>
+            <li><strong>ทักษะการใช้เทคโนโลยีและ AI อย่างรู้เท่าทัน (AI Literacy):</strong> สามารถเขียนคำสั่ง (Prompt) และปรับแต่งงานร่วมกับเครื่องมือยุคใหม่ได้อย่างมีคุณภาพ</li>
+            <li><strong>การทำงานร่วมกับผู้อื่น (Collaboration):</strong> งานแอนิเมชันขนาดใหญ่ต้องทำงานเป็นทีมร่วมกับนักเขียนบท นักพากย์ และนักตัดต่อ</li>
+          </ul>
+        `,
+        keyTakeaways: [
+          "อาชีพสาย Digital Creator มีความหลากหลาย ทั้งทำงานในสตูดิโอและเป็นนักสร้างสรรค์อิสระ (Freelance)",
+          "ทักษะการเล่าเรื่อง (Storytelling) และความคิดสร้างสรรค์เป็นจุดแข็งที่ AI ทดแทนได้ยาก",
+          "การเรียนรู้เครื่องมือดิจิทัลใหม่ๆ อย่างต่อเนื่องช่วยให้ปรับตัวเข้ากับตลาดแรงงานได้"
+        ],
+        isCaseStudy: false,
+        caseStudyPrompt: ""
+      },
+      {
+        id: "3",
+        title: "หน่วยที่ 3: จริยธรรมและลิขสิทธิ์ในการใช้ AI",
+        subtitle: "เข้าใจกฎหมายลิขสิทธิ์ สิทธิ์ของศิลปิน การให้เครดิต และการป้องกัน Deepfake",
+        duration: "25 นาที",
+        icon: "fa-scale-balanced",
+        summary: "ทำความเข้าใจประเด็นด้านลิขสิทธิ์ (Copyright) การละเมิดทรัพย์สินทางปัญญาในการฝึกฝน AI การอ้างอิงแหล่งที่มา และความรับผิดชอบต่อสังคมในการเผยแพร่สื่อดิจิทัล",
+        contentHtml: `
+          <h3>1. ลิขสิทธิ์ (Copyright) ในงานสร้างสรรค์ดิจิทัล</h3>
+          <p><strong>ลิขสิทธิ์</strong> คือ สิทธิแต่เพียงผู้เดียวของผู้สร้างสรรค์ที่จะกระทำการใดๆ เกี่ยวกับงานที่ตนได้ทำขึ้น เช่น งานภาพวาด งานแอนิเมชัน ดนตรี และบทภาพยนตร์ การนำผลงานของผู้อื่นไปใช้ ดัดแปลง หรือเผยแพร่เพื่อการค้าโดยไม่ได้รับอนุญาต ถือเป็นการละเมิดลิขสิทธิ์</p>
+          <h3>2. ประเด็นท้าทายด้านลิขสิทธิ์และจริยธรรมของ AI</h3>
+          <ul>
+            <li><strong>ชุดข้อมูลฝึกสอน (Training Data):</strong> AI บางระบบถูกฝึกจากภาพวาดของศิลปินบนอินเทอร์เน็ตโดยไม่ได้ขออนุญาต การสั่งให้ AI เลียนแบบลายเส้นเฉพาะตัวของศิลปินที่มีชีวิตอยู่ (Style Mimicry) อาจส่งผลกระทบต่อรายได้และสิทธิ์ของศิลปิน</li>
+            <li><strong>ความเป็นเจ้าของผลงานที่สร้างจาก AI:</strong> ในหลายประเทศ งานที่สร้างโดย AI ล้วนๆ โดยไม่มีมนุษย์สร้างสรรค์ร่วมด้วย อาจไม่ได้รับความคุ้มครองลิขสิทธิ์ตามกฎหมาย</li>
+            <li><strong>ความโปร่งใสและการเปิดเผยข้อมูล (Transparency):</strong> หากมีการใช้ AI ช่วยสร้างภาพหรือเสียง ควรระบุให้ชัดเจนและไม่แอบอ้างว่าเป็นงานวาดมือทั้งหมด</li>
+          </ul>
+          <h3>3. ข้อควรระวังเรื่อง Deepfake และข้อมูลบิดเบือน</h3>
+          <p>ห้ามนำเทคโนโลยี AI ไปสร้างภาพเคลื่อนไหวหรือเลียนแบบใบหน้าและเสียงของบุคคลอื่น (Deepfake) เพื่อกลั่นแกล้ง หลอกลวง หรือสร้างข่าวปลอม (Fake News) เพราะผิดทั้งจริยธรรมดิจิทัลและกฎหมายคอมพิวเตอร์</p>
+        `,
+        keyTakeaways: [
+          "เคารพทรัพย์สินทางปัญญา ไม่ใช้ AI คัดลอกหรือเลียนแบบลายเส้นของศิลปินเพื่อแสวงหาผลประโยชน์โดยมิชอบ",
+          "เปิดเผยอย่างโปร่งใสเมื่อใช้ AI ร่วมในการผลิตสื่อ และตรวจสอบความถูกต้องของข้อมูลเสมอ",
+          "ไม่สร้างสื่อ Deepfake หรือเนื้อหาที่ละเมิดสิทธิส่วนบุคคลของผู้อื่น"
+        ],
+        isCaseStudy: false,
+        caseStudyPrompt: ""
+      },
+      {
+        id: "4",
+        title: "หน่วยที่ 4: การสำรวจเส้นทางอาชีพ (สายสามัญ/อาชีพ)",
+        subtitle: "วางแผนการศึกษาต่อระดับ ม.ปลาย และ ปวช. สำหรับนักเรียน ม.3 สู่สายงานแอนิเมชัน",
+        duration: "20 นาที",
+        icon: "fa-compass",
+        summary: "เปรียบเทียบทางเลือกการศึกษาต่อหลังจบชั้นมัธยมศึกษาปีที่ 3 ทั้งสายสามัญ (ม.4–ม.6) และสายอาชีพ (ปวช.) พร้อมแนวทางการจัดทำแฟ้มสะสมผลงาน (Portfolio) ด้านแอนิเมชัน",
+        contentHtml: `
+          <h3>1. เส้นทางสายสามัญ (ระดับชั้น ม.4 - ม.6)</h3>
+          <p>เหมาะสำหรับนักเรียนที่ต้องการปูพื้นฐานวิชาการควบคู่กับการเตรียมตัวเข้าศึกษาต่อในระดับมหาวิทยาลัย:</p>
+          <ul>
+            <li><strong>แผนการเรียนวิทยาศาสตร์-คณิตศาสตร์ / คอมพิวเตอร์:</strong> ได้เปรียบในการเรียนต่อด้านวิศวกรรมซอฟต์แวร์ เกม และคอมพิวเตอร์กราฟิก 3D ขั้นสูง (เช่น การเขียนโปรแกรมฟิสิกส์ในแอนิเมชัน)</li>
+            <li><strong>แผนการเรียนศิลป์-คำนวณ / ศิลป์-ดิจิทัล / ศิลปกรรม:</strong> เน้นทักษะการวาดเส้น การออกแบบองค์ประกอบศิลป์ ภาษาอังกฤษ และความคิดสร้างสรรค์ เพื่อเข้าสู่คณะดิจิทัลมีเดีย นิเทศศาสตร์ หรือศิลปกรรมศาสตร์</li>
+          </ul>
+          <h3>2. เส้นทางสายอาชีพ (ระดับประกาศนียบัตรวิชาชีพ - ปวช.)</h3>
+          <p>เหมาะสำหรับนักเรียนที่ต้องการเน้น <strong>"การลงมือปฏิบัติจริง"</strong> และฝึกทักษะวิชาชีพเฉพาะทางตั้งแต่อายุ 15 ปี:</p>
+          <ul>
+            <li><strong>สาขาวิชาคอมพิวเตอร์กราฟิก / ดิจิทัลกราฟิก:</strong> เรียนรู้การออกแบบกราฟิก การวาดภาพประกอบ และการผลิตสื่อสิ่งพิมพ์และสื่อดิจิทัล</li>
+            <li><strong>สาขาวิชาเทคโนโลยีสารสนเทศ / มัลติมีเดียและแอนิเมชัน:</strong> ฝึกปฏิบัติการสร้างโมเดล 3D การตัดต่อวิดีโอ การทำแอนิเมชัน 2D และการพัฒนาสื่ออินเทอร์แอคทีฟ สามารถต่อยอดสู่ระดับ ปวส. หรือปริญญาตรี รวมถึงรับงานอิสระได้เร็ว</li>
+          </ul>
+          <h3>3. การเตรียมตัวตั้งแต่วันนี้ (Portfolio)</h3>
+          <p>ไม่ว่าจะเลือกสายสามัญหรือสายอาชีพ นักเรียนควรเริ่มเก็บผลงานตั้งแต่มัธยมศึกษาตอนต้น เช่น ภาพสเก็ตช์ตัวละคร สตอรี่บอร์ด คลิปแอนิเมชันสั้นๆ และเกียรติบัตรจากการแข่งขันหรือการอบรม เพื่อใช้ยื่นสมัครเรียนต่อ</p>
+        `,
+        keyTakeaways: [
+          "สายสามัญ (ม.4–ม.6) เน้นพื้นฐานวิชาการเพื่อต่อยอดระดับมหาวิทยาลัยในหลากหลายคณะ",
+          "สายอาชีพ (ปวช.) เน้นทักษะปฏิบัติจริงเฉพาะทาง เช่น สาขาคอมพิวเตอร์กราฟิกและมัลติมีเดีย",
+          "การสะสมผลงาน (Portfolio) ตั้งแต่วัยเรียนเป็นกุญแจสำคัญในการเข้าศึกษาต่อสายดิจิทัลอาร์ต"
+        ],
+        isCaseStudy: false,
+        caseStudyPrompt: ""
+      },
+      {
+        id: "5",
+        title: "หน่วยที่ 5: กิจกรรมหลัก วิเคราะห์กรณีศึกษา - ผลกระทบของ AI ต่ออาชีพ",
+        subtitle: "ฝึกคิดวิเคราะห์เชิงวิพากษ์ เข้าใจบทบาทวิชาชีพ และตระหนักถึงจริยธรรมดิจิทัล",
+        duration: "30 นาที",
+        icon: "fa-lightbulb",
+        summary: "กิจกรรมวิเคราะห์สถานการณ์จำลองจริงในวงการแอนิเมชัน เพื่อให้นักเรียนสังเคราะห์แนวทางการปรับตัวของนักสร้างสรรค์ดิจิทัลและการใช้ AI อย่างมีจริยธรรม",
+        contentHtml: `
+          <h3>สถานการณ์กรณีศึกษา: "สตูดิโอแสงเหนือแอนิเมชัน กับทางแยกของเทคโนโลยี AI"</h3>
+          <p><strong>เหตุการณ์สมมติ:</strong> สตูดิโอ "แสงเหนือแอนิเมชัน" กำลังผลิตซีรีส์แอนิเมชันเยาวชนเรื่องใหม่ ฝ่ายบริหารเสนอให้ลดจำนวนนักวาดฉากหลัง (Background Artist) และนักวาดภาพช่วงกลาง (In-between Animator) ลงครึ่งหนึ่ง แล้วนำโปรแกรม AI มาสร้างภาพฉากหลังแทนทั้งหมดเพื่อประหยัดงบประมาณและส่งงานได้เร็วขึ้น</p>
+          <p>อย่างไรก็ตาม ทีมนักออกแบบพบว่า ภาพที่ AI สร้างขึ้นมีบางส่วนคล้ายคลึงกับลายเส้นของศิลปินอิสระชื่อดังโดยไม่ได้ขออนุญาต และอารมณ์ของภาพในแต่ละฉากยังไม่ต่อเนื่องกัน ทีมงานจึงต้องประชุมเพื่อหาทางออกที่เหมาะสมทั้งต่อคุณภาพผลงาน บทบาทของทีมงาน และจริยธรรมวิชาชีพ</p>
+          <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-xl my-4">
+            <p class="font-semibold text-sky-900 mb-1"><i class="fa-solid fa-circle-question mr-1.5"></i>ประเด็นชวนคิดก่อนตอบกิจกรรม:</p>
+            <ul class="mb-0 text-sm text-sky-800">
+              <li>1. AI ส่งผลกระทบทั้งด้านบวกและด้านลบต่ออาชีพนักสร้างสรรค์แอนิเมชันอย่างไร?</li>
+              <li>2. หากนักเรียนเป็นหัวหน้าทีมแอนิเมชัน จะปรับบทบาทของพนักงานและใช้ AI อย่างไรให้เกิดจริยธรรมและไม่ละเมิดลิขสิทธิ์?</li>
+            </ul>
+          </div>
+        `,
+        keyTakeaways: [
+          "เข้าใจผลกระทบสองด้านของ AI ทั้งการเพิ่มความเร็วในการผลิตและความท้าทายด้านการจ้างงาน",
+          "ตระหนักถึงความสำคัญของการตรวจสอบลิขสิทธิ์และจริยธรรมก่อนนำผลงาน AI ไปเผยแพร่",
+          "สามารถเสนอแนวทางการทำงานร่วมกันระหว่างมนุษย์กับ AI (Human-in-the-Loop) ได้อย่างสร้างสรรค์"
+        ],
+        isCaseStudy: true,
+        caseStudyPrompt: "ให้นักเรียนวิเคราะห์กรณีศึกษาข้างต้น โดยอธิบาย (1) ผลกระทบของ AI ต่ออาชีพในสตูดิโอแอนิเมชัน และ (2) แนวทางที่เหมาะสมในการนำ AI มาใช้ร่วมกับนักสร้างสรรค์ดิจิทัลโดยคำนึงถึงจริยธรรมและลิขสิทธิ์ (ความยาวอย่างน้อย 2-3 บรรทัด)"
+      }
+    ];
+
+    // ==================== ข้อมูลเริ่มต้น: คลังข้อสอบ 20 ข้อ (Pre-test & Post-test) ====================
+    const DEFAULT_QUESTIONS = [
+      {
+        id: "q1",
+        question: "ข้อใดให้ความหมายของ 'นักสร้างสรรค์ดิจิทัล (Digital Creator)' ได้ถูกต้องที่สุด?",
+        choices: [
+          "ผู้ที่ซ่อมแซมอุปกรณ์คอมพิวเตอร์และระบบเครือข่ายในองค์กร",
+          "ผู้ที่ออกแบบ ผลิต และเผยแพร่สื่อดิจิทัล เช่น แอนิเมชัน วิดีโอ หรือกราฟิก เพื่อสื่อสารเรื่องราว",
+          "ผู้ที่ทำหน้าที่จัดเก็บเอกสารกระดาษในสำนักงาน",
+          "ผู้ที่จำหน่ายอุปกรณ์อิเล็กทรอนิกส์เพียงอย่างเดียว"
+        ],
+        correctIndex: 1,
+        explanation: "Digital Creator คือผู้สร้างสรรค์และเผยแพร่คอนเทนต์หรือสื่อในรูปแบบดิจิทัล เช่น แอนิเมชัน วิดีโอ และกราฟิก"
+      },
+      {
+        id: "q2",
+        question: "การเขียนบท (Script) ออกแบบตัวละคร และวาดสตอรี่บอร์ด (Storyboard) จัดอยู่ในขั้นตอนใดของการสร้าง Animation?",
+        choices: [
+          "ขั้นเตรียมการผลิต (Pre-Production)",
+          "ขั้นการผลิต (Production)",
+          "ขั้นหลังการผลิต (Post-Production)",
+          "ขั้นการเผยแพร่และจำหน่าย (Distribution)"
+        ],
+        correctIndex: 0,
+        explanation: "การวางแผน เขียนบท ออกแบบตัวละคร และวาดสตอรี่บอร์ด คือขั้นตอน Pre-Production"
+      },
+      {
+        id: "q3",
+        question: "เครื่องมือ AI ควรมีบทบาทอย่างไรในการทำงานของนักสร้างสรรค์สื่อ Animation?",
+        choices: [
+          "ใช้สร้างผลงานทั้งหมดแล้วแอบอ้างว่าเป็นงานวาดมือ 100%",
+          "ใช้เป็นเครื่องมือผู้ช่วยลดงานซ้ำซ้อน โดยมนุษย์ยังคงเป็นผู้ควบคุมความคิดสร้างสรรค์และจริยธรรม",
+          "ใช้คัดลอกผลงานของศิลปินที่มีชื่อเสียงมาขายต่อ",
+          "ใช้แทนที่มนุษย์ทั้งหมดโดยไม่ต้องตรวจสอบความถูกต้อง"
+        ],
+        correctIndex: 1,
+        explanation: "AI ควรเป็นเครื่องมือช่วยเสริมประสิทธิภาพการทำงาน โดยมนุษย์เป็นผู้ออกแบบและรับผิดชอบด้านจริยธรรม"
+      },
+      {
+        id: "q4",
+        question: "เหตุใด 'สตอรี่บอร์ด (Storyboard)' จึงมีความสำคัญอย่างยิ่งต่อการผลิตสื่อ Animation?",
+        choices: [
+          "ช่วยให้ทราบราคาค่าตั๋วเข้าชมภาพยนตร์ล่วงหน้า",
+          "ช่วยให้เห็นลำดับภาพ มุมกล้อง และการเล่าเรื่องที่ชัดเจนก่อนลงมือสร้างจริง",
+          "ใช้สำหรับคำนวณความเร็วอินเทอร์เน็ตของสตูดิโอ",
+          "ใช้แทนการพากย์เสียงตัวละครทั้งหมด"
+        ],
+        correctIndex: 1,
+        explanation: "Storyboard คือแผนภาพลำดับเหตุการณ์ที่ช่วยให้ทีมงานเข้าใจมุมกล้อง จังหวะ และเนื้อเรื่องตรงกัน"
+      },
+      {
+        id: "q5",
+        question: "อาชีพใดมีหน้าที่แปลงบทเรื่องราวให้เป็นภาพลำดับเหตุการณ์และกำหนดมุมกล้องของฉากแอนิเมชัน?",
+        choices: [
+          "Sound Engineer",
+          "Storyboard Artist",
+          "Network Administrator",
+          "Data Entry Clerk"
+        ],
+        correctIndex: 1,
+        explanation: "Storyboard Artist คือผู้วาดลำดับภาพและวางมุมกล้องตามบทที่ได้รับ"
+      },
+      {
+        id: "q6",
+        question: "ทักษะใดที่ตลาดแรงงานสาย Digital Creator ยุค AI ให้ความสำคัญมากที่สุดเพราะ AI ทดแทนได้ยาก?",
+        choices: [
+          "การพิมพ์สัมผัสด้วยความเร็วสูง",
+          "การเล่าเรื่อง (Storytelling) ความคิดสร้างสรรค์ และความเข้าใจอารมณ์มนุษย์",
+          "การคัดลอกไฟล์ข้อมูลจำนวนมาก",
+          "การจดจำรหัสผ่านของโปรแกรมต่างๆ"
+        ],
+        correctIndex: 1,
+        explanation: "การเล่าเรื่องที่เข้าถึงอารมณ์และความคิดสร้างสรรค์ที่เป็นเอกลักษณ์เป็นจุดแข็งสำคัญของมนุษย์"
+      },
+      {
+        id: "q7",
+        question: "หากนักเรียนสนใจสร้างกราฟิกเคลื่อนไหวสำหรับโฆษณา รายการทีวี หรืออินโฟกราฟิกเคลื่อนไหว ตรงกับสายอาชีพใด?",
+        choices: [
+          "Motion Graphic Designer",
+          "Hardware Technician",
+          "Database Analyst",
+          "Web Server Maintainer"
+        ],
+        correctIndex: 0,
+        explanation: "Motion Graphic Designer คือผู้เชี่ยวชาญด้านการออกแบบกราฟิกเคลื่อนไหวเพื่อการสื่อสาร"
+      },
+      {
+        id: "q8",
+        question: "ข้อใดสะท้อนการปรับตัวที่ดีของนักสร้างสรรค์ดิจิทัลในตลาดแรงงานยุคปัจจุบัน?",
+        choices: [
+          "ปฏิเสธการใช้เทคโนโลยีใหม่ทุกชนิดและยึดติดกับวิธีเดิมเท่านั้น",
+          "เรียนรู้การใช้เทคโนโลยีและ AI อย่างรู้เท่าทัน ควบคู่กับการพัฒนาเอกลักษณ์งานของตนเอง",
+          "หยุดฝึกฝนทักษะการวาดและพึ่งพาคำสั่งอัตโนมัติเพียงอย่างเดียว",
+          "เปลี่ยนอาชีพไปทำงานที่ไม่เกี่ยวข้องกับเทคโนโลยีทันที"
+        ],
+        correctIndex: 1,
+        explanation: "การผสานทักษะศิลปะเข้ากับความเข้าใจเทคโนโลยีสมัยใหม่ช่วยให้ทำงานได้โดดเด่นและมีประสิทธิภาพ"
+      },
+      {
+        id: "q9",
+        question: "การกระทำใดต่อไปนี้เข้าข่าย 'การละเมิดจริยธรรมและลิขสิทธิ์' ในการใช้ AI สร้างสรรค์สื่อ?",
+        choices: [
+          "ใช้ AI ช่วยคิดไอเดียโครงเรื่องแล้วนำมาวาดตัวละครด้วยตนเองใหม่ทั้งหมด",
+          "สั่งให้ AI เลียนแบบลายเส้นเฉพาะตัวของศิลปินคนอื่นเพื่อนำไปขายเชิงพาณิชย์โดยไม่ได้รับอนุญาต",
+          "ใช้ภาพถ่ายของตนเองมาปรับแต่งแสงสีด้วยเครื่องมือ AI",
+          "ระบุข้อความแจ้งผู้ชมว่าภาพประกอบบางส่วนสร้างด้วยเครื่องมือ AI"
+        ],
+        correctIndex: 1,
+        explanation: "การจงใจเลียนแบบลายเส้นเฉพาะตัวของศิลปินอื่นเพื่อผลประโยชน์ทางการค้าเป็นการละเมิดสิทธิ์และจริยธรรม"
+      },
+      {
+        id: "q10",
+        question: "เทคโนโลยี 'Deepfake' หากนำมาใช้ในทางที่ผิดจะส่งผลเสียอย่างไร?",
+        choices: [
+          "ช่วยให้ไฟล์แอนิเมชันมีขนาดเล็กลง",
+          "สร้างภาพหรือเสียงปลอมเลียนแบบบุคคลอื่น ทำให้เกิดการหลอกลวงและเสื่อมเสียชื่อเสียง",
+          "ช่วยให้คอมพิวเตอร์ประมวลผลกราฟิกได้เร็วขึ้น",
+          "ช่วยป้องกันไวรัสคอมพิวเตอร์"
+        ],
+        correctIndex: 1,
+        explanation: "Deepfake ที่ใช้โดยขาดจริยธรรมสามารถสร้างข่าวปลอมและละเมิดสิทธิส่วนบุคคลอย่างรุนแรง"
+      },
+      {
+        id: "q11",
+        question: "ข้อใดคือแนวปฏิบัติที่ดีที่สุดเมื่อนำภาพหรือเสียงที่สร้างจาก AI มาประกอบในโครงงานแอนิเมชันส่งครู?",
+        choices: [
+          "ปิดบังข้อมูลและบอกว่าเป็นผลงานที่วาดและบันทึกเสียงเองทั้งหมด",
+          "เปิดเผยอย่างโปร่งใสว่าใช้เครื่องมือ AI ใดช่วยในส่วนไหน และตรวจสอบความเหมาะสมของเนื้อหา",
+          "นำชื่อศิลปินที่มีชื่อเสียงมาใส่เป็นชื่อผู้จัดทำแทน",
+          "ลบแหล่งที่มาของข้อมูลออกทั้งหมด"
+        ],
+        correctIndex: 1,
+        explanation: "ความซื่อสัตย์และความโปร่งใส (Transparency) เป็นหัวใจสำคัญของจริยธรรมดิจิทัล"
+      },
+      {
+        id: "q12",
+        question: "เหตุใดชุดข้อมูลฝึกสอน (Training Data) ของ AI จึงเป็นประเด็นถกเถียงด้านลิขสิทธิ์ในวงการศิลปะ?",
+        choices: [
+          "เพราะชุดข้อมูลมีขนาดเล็กเกินไป",
+          "เพราะมีการนำผลงานของศิลปินบนอินเทอร์เน็ตไปใช้ฝึก AI โดยไม่ได้ขออนุญาตหรือจ่ายค่าตอบแทน",
+          "เพราะ AI ไม่สามารถประมวลผลภาพสีได้",
+          "เพราะศิลปินทุกคนยินยอมให้ใช้ฟรีอยู่แล้ว"
+        ],
+        correctIndex: 1,
+        explanation: "การนำผลงานมีลิขสิทธิ์ไปฝึก AI โดยไม่ขออนุญาตเจ้าของผลงานทำให้เกิดข้อพิพาทด้านทรัพย์สินทางปัญญา"
+      },
+      {
+        id: "q13",
+        question: "นักเรียนชั้น ม.3 ที่ต้องการเน้น 'การลงมือปฏิบัติจริง' ด้านคอมพิวเตอร์กราฟิกและแอนิเมชันตั้งแต่อายุ 15 ปี ควรเลือกศึกษาต่อเส้นทางใด?",
+        choices: [
+          "สายอาชีพ (ปวช.) สาขาวิชาคอมพิวเตอร์กราฟิก หรือมัลติมีเดียและแอนิเมชัน",
+          "สายสามัญ แผนการเรียนภาษาโบราณ",
+          "หลักสูตรระยะสั้นด้านการเกษตร",
+          "ไม่ต้องศึกษาต่อและรอสมัครงานทันที"
+        ],
+        correctIndex: 0,
+        explanation: "หลักสูตร ปวช. สาขาคอมพิวเตอร์กราฟิก/มัลติมีเดีย เน้นฝึกปฏิบัติวิชาชีพเฉพาะทางโดยตรง"
+      },
+      {
+        id: "q14",
+        question: "หากนักเรียนเลือกเรียนต่อสายสามัญ (ม.4–ม.6) เพื่อเข้าคณะดิจิทัลมีเดียหรือแอนิเมชันในมหาวิทยาลัย แผนการเรียนใดเหมาะสม?",
+        choices: [
+          "แผนการเรียนวิทย์-คณิต/คอมพิวเตอร์ หรือแผนการเรียนศิลป์-คำนวณ/ศิลป์-ดิจิทัล",
+          "แผนการเรียนที่ไม่มีรายวิชาคอมพิวเตอร์และศิลปะเลย",
+          "เลือกเรียนเฉพาะวิชาพลศึกษาเท่านั้น",
+          "สายสามัญไม่สามารถเรียนต่อด้านแอนิเมชันได้"
+        ],
+        correctIndex: 0,
+        explanation: "ทั้งสายวิทย์-คณิต (เด่นด้านเทคนิค 3D/โปรแกรม) และศิลป์-ดิจิทัล (เด่นด้านการออกแบบ) สามารถต่อยอดสายแอนิเมชันได้"
+      },
+      {
+        id: "q15",
+        question: "สิ่งใดสำคัญที่สุดในการยื่นสมัครเรียนต่อระดับอุดมศึกษาด้านสร้างสรรค์สื่อ Animation?",
+        choices: [
+          "แฟ้มสะสมผลงาน (Portfolio) ที่แสดงทักษะการวาด ออกแบบ และสร้างงานแอนิเมชัน",
+          "ใบเสร็จค่าซื้ออุปกรณ์คอมพิวเตอร์",
+          "รายชื่อเกมออนไลน์ที่เคยเล่น",
+          "จำนวนผู้ติดตามในโซเชียลมีเดียส่วนตัวเท่านั้น"
+        ],
+        correctIndex: 0,
+        explanation: "Portfolio เป็นหลักฐานสำคัญที่แสดงให้คณะกรรมการเห็นทักษะ ความคิดสร้างสรรค์ และความตั้งใจของผู้สมัคร"
+      },
+      {
+        id: "q16",
+        question: "ความแตกต่างหลักระหว่างการศึกษาต่อ 'สายสามัญ (ม.ปลาย)' กับ 'สายอาชีพ (ปวช.)' คือข้อใด?",
+        choices: [
+          "สายสามัญเน้นพื้นฐานวิชาการหลากหลายเพื่อต่อมหาวิทยาลัย ส่วนสายอาชีพเน้นทักษะปฏิบัติวิชาชีพเฉพาะทาง",
+          "สายสามัญเรียนเพียง 1 ปี ส่วนสายอาชีพเรียน 6 ปี",
+          "สายอาชีพไม่สามารถเรียนต่อระดับปริญญาตรีได้",
+          "สายสามัญไม่ต้องสอบวัดผลใดๆ"
+        ],
+        correctIndex: 0,
+        explanation: "สายสามัญเน้นวิชาการปูพื้นฐานสู่มหาวิทยาลัย ขณะที่ ปวช. เน้นทักษะวิชาชีพปฏิบัติจริง"
+      },
+      {
+        id: "q17",
+        question: "จากกรณีศึกษาสตูดิโอแอนิเมชันที่ใช้ AI สร้างฉากหลังทั้งหมดโดยไม่ตรวจสอบ ปัญหาใดมักเกิดขึ้นกับผลงาน?",
+        choices: [
+          "ผลงานมีความสมบูรณ์แบบไร้ที่ติทุกเฟรม",
+          "อารมณ์และความต่อเนื่องของภาพในแต่ละฉากไม่สอดคล้องกัน และเสี่ยงต่อการละเมิดลิขสิทธิ์",
+          "ไฟล์วิดีโอไม่สามารถเปิดเล่นบนคอมพิวเตอร์ได้",
+          "ตัวละครพูดภาษาต่างประเทศโดยอัตโนมัติ"
+        ],
+        correctIndex: 1,
+        explanation: "งานที่สร้างโดย AI ล้วนๆ มักขาดความต่อเนื่องทางศิลปะ (Consistency) และอาจมีปัญหาด้านลิขสิทธิ์"
+      },
+      {
+        id: "q18",
+        question: "แนวคิด 'Human-in-the-Loop' ในการผลิตสื่อ Animation ร่วมกับ AI หมายถึงข้อใด?",
+        choices: [
+          "การให้ AI ทำงานวนซ้ำไปเรื่อยๆ โดยไม่มีมนุษย์ดูแล",
+          "การให้มนุษย์มีส่วนร่วมกำกับ ตัดสินใจ ปรับปรุงคุณภาพ และตรวจสอบจริยธรรมในทุกขั้นตอนที่ใช้ AI",
+          "การห้ามมนุษย์ใช้คอมพิวเตอร์ในการวาดภาพ",
+          "การให้ผู้ชมเป็นผู้วาดแอนิเมชันเองทั้งหมด"
+        ],
+        correctIndex: 1,
+        explanation: "Human-in-the-Loop คือการทำงานร่วมกันโดยมีมนุษย์เป็นศูนย์กลางควบคุมคุณภาพและจริยธรรม"
+      },
+      {
+        id: "q19",
+        question: "หากสตูดิโอแอนิเมชันต้องการนำ AI มาใช้อย่างมีจริยธรรมและเป็นธรรมต่อพนักงาน ควรดำเนินการอย่างไร?",
+        choices: [
+          "เลิกจ้างพนักงานทั้งหมดทันทีโดยไม่แจ้งล่วงหน้า",
+          "อบรมพัฒนาทักษะ (Upskill) ให้พนักงานใช้ AI เป็นผู้ช่วย เพื่อยกระดับคุณภาพงานและลดเวลาทำงานซ้ำซ้อน",
+          "บังคับให้พนักงานคัดลอกงานของคู่แข่งด้วย AI",
+          "ลดเงินเดือนพนักงานทุกคนลงครึ่งหนึ่ง"
+        ],
+        correctIndex: 1,
+        explanation: "การพัฒนาทักษะให้บุคลากรใช้ AI เป็นเครื่องมือเสริมช่วยรักษาคุณค่าของคนทำงานและเพิ่มศักยภาพองค์กร"
+      },
+      {
+        id: "q20",
+        question: "ข้อใดสรุปบทบาทของนักสร้างสรรค์ดิจิทัลยุคใหม่ที่มีจริยธรรมได้ครอบคลุมที่สุด?",
+        choices: [
+          "เน้นผลิตงานให้เร็วที่สุดโดยไม่สนใจความถูกต้องของข้อมูล",
+          "ผสานความคิดสร้างสรรค์ เทคโนโลยี AI และความรับผิดชอบต่อลิขสิทธิ์และสังคมเข้าด้วยกัน",
+          "พึ่งพา AI ในการคิดและสร้างทุกอย่างแทนตนเอง",
+          "หลีกเลี่ยงการทำงานร่วมกับผู้อื่นในทุกกรณี"
+        ],
+        correctIndex: 1,
+        explanation: "นักสร้างสรรค์ดิจิทัลที่ดีต้องมีความคิดสร้างสรรค์ ใช้เทคโนโลยีเป็น และยึดมั่นในจริยธรรมดิจิทัล"
+      }
+    ];
+
+    // ==================== APPLICATION STATE ====================
+    const STORAGE_KEYS = {
+      GAS_URL: 'pbw_anim_gas_url_v1',
+      STUDENTS: 'pbw_anim_students_v1',
+      LESSONS: 'pbw_anim_lessons_v1',
+      QUESTIONS: 'pbw_anim_questions_v1',
+      SESSION: 'pbw_anim_session_v1'
+    };
+
+    let state = {
+      gasUrl: localStorage.getItem(STORAGE_KEYS.GAS_URL) || DEFAULT_GAS_URL,
+      isConnected: false,
+      isSyncing: false,
+      students: [],
+      lessons: [],
+      questions: [],
+      currentUser: null, // { role: 'student' | 'admin', username, name, classroom }
+      activeView: 'login', // 'login' | 'student_dashboard' | 'quiz' | 'lesson' | 'certificate' | 'admin_dashboard'
+      quizMode: 'pre', // 'pre' | 'post'
+      activeQuizQuestions: [],
+      quizAnswers: {},
+      currentQuizIndex: 0,
+      activeLessonId: null,
+      adminTab: 'dashboard', // 'dashboard' | 'lessons' | 'questions' | 'students' | 'sheets'
+      selectedClassroomFilter: 'ALL',
+      studentSearchQuery: ''
+    };
+
+    let classroomChartInstance = null;
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', async () => {
+      loadLocalCache();
+      restoreSession();
+      renderApp();
+
+      if (state.gasUrl) {
+        await syncFromGoogleSheets(true);
+      } else {
+        updateSyncBadge('offline', 'โหมดในเครื่อง (ยังไม่เชื่อม Sheets)');
+      }
+    });
+
+    function loadLocalCache() {
+      try {
+        const s = JSON.parse(localStorage.getItem(STORAGE_KEYS.STUDENTS));
+        const l = JSON.parse(localStorage.getItem(STORAGE_KEYS.LESSONS));
+        const q = JSON.parse(localStorage.getItem(STORAGE_KEYS.QUESTIONS));
+        state.students = (Array.isArray(s) && s.length > 0) ? s : JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
+        state.lessons = (Array.isArray(l) && l.length > 0) ? l : JSON.parse(JSON.stringify(DEFAULT_LESSONS));
+        state.questions = (Array.isArray(q) && q.length > 0) ? q : JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+      } catch (e) {
+        state.students = JSON.parse(JSON.stringify(DEFAULT_STUDENTS));
+        state.lessons = JSON.parse(JSON.stringify(DEFAULT_LESSONS));
+        state.questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+      }
+    }
+
+    function saveLocalCache() {
+      localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(state.students));
+      localStorage.setItem(STORAGE_KEYS.LESSONS, JSON.stringify(state.lessons));
+      localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(state.questions));
+    }
+
+    function restoreSession() {
+      try {
+        const sess = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION));
+        if (sess && sess.username) {
+          if (sess.role === 'admin') {
+            state.currentUser = ADMIN_ACCOUNT;
+            state.activeView = 'admin_dashboard';
+          } else {
+            const st = state.students.find(x => x.username === sess.username);
+            if (st) {
+              state.currentUser = { role: 'student', username: st.username, name: st.name, classroom: st.classroom };
+              state.activeView = 'student_dashboard';
+            }
+          }
+        }
+      } catch (e) {
+        state.currentUser = null;
+      }
+    }
+
+    // ==================== GOOGLE APPS SCRIPT API CLIENT ====================
+    function updateSyncBadge(status, text) {
+      const badge = document.getElementById('sync-badge');
+      const label = document.getElementById('sync-badge-text');
+      if (!badge || !label) return;
+      label.textContent = text;
+      badge.className = 'text-xs font-medium px-2.5 py-0.5 rounded-full border flex items-center gap-1.5 ';
+      if (status === 'connected') {
+        badge.className += 'bg-emerald-500/25 text-white border-emerald-300/60';
+      } else if (status === 'syncing') {
+        badge.className += 'bg-sky-300/30 text-white border-white/50 animate-pulse';
+      } else {
+        badge.className += 'bg-amber-400/25 text-white border-white/30';
+      }
+    }
+
+    async function syncFromGoogleSheets(silent = false) {
+      if (!state.gasUrl) return false;
+      state.isSyncing = true;
+      updateSyncBadge('syncing', 'กำลังซิงค์ข้อมูล...');
+      try {
+        const sep = state.gasUrl.includes('?') ? '&' : '?';
+        const res = await fetch(`${state.gasUrl}${sep}action=getAllData&_t=${Date.now()}`);
+        const json = await res.json();
+        if (json.status === 'success') {
+          state.isConnected = true;
+          if (Array.isArray(json.students) && json.students.length > 0) {
+            state.students = json.students;
+          }
+          if (Array.isArray(json.lessons) && json.lessons.length > 0) {
+            state.lessons = json.lessons;
+          }
+          if (Array.isArray(json.questions) && json.questions.length > 0) {
+            state.questions = json.questions;
+          }
+          saveLocalCache();
+          updateSyncBadge('connected', 'เชื่อมต่อ Google Sheets แล้ว');
+          if (!silent) showToast('ซิงค์ข้อมูลจาก Google Sheets สำเร็จ', 'success');
+          renderApp();
+          return true;
+        } else {
+          throw new Error(json.message || 'ไม่สามารถอ่านข้อมูลได้');
+        }
+      } catch (err) {
+        state.isConnected = false;
+        updateSyncBadge('offline', 'เชื่อมต่อ Sheets ไม่สำเร็จ');
+        if (!silent) showToast('เชื่อมต่อ Google Sheets ไม่สำเร็จ: ' + err.message, 'error');
+        return false;
+      } finally {
+        state.isSyncing = false;
+      }
+    }
+
+    async function postToGoogleSheets(payload, silent = false) {
+      if (!state.gasUrl) return false;
+      updateSyncBadge('syncing', 'กำลังบันทึกขึ้น Cloud...');
+      try {
+        // ใช้ text/plain;charset=utf-8 เพื่อหลีกเลี่ยง CORS Preflight (OPTIONS) บน Google Apps Script
+        const res = await fetch(state.gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.status === 'success') {
+          state.isConnected = true;
+          updateSyncBadge('connected', 'บันทึกขึ้น Google Sheets แล้ว');
+          if (!silent && json.message) showToast(json.message, 'success');
+          return true;
+        } else {
+          throw new Error(json.message || 'บันทึกข้อมูลไม่สำเร็จ');
+        }
+      } catch (err) {
+        updateSyncBadge('offline', 'บันทึกออฟไลน์ (ซิงค์ไม่สำเร็จ)');
+        if (!silent) showToast('บันทึกในเครื่องแล้ว แต่ซิงค์ขึ้น Google Sheets ไม่สำเร็จ: ' + err.message, 'warning');
+        return false;
+      }
+    }
+
+    // ==================== HELPER UTILITIES ====================
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-600 text-white border-emerald-400',
+        error: 'bg-rose-600 text-white border-rose-400',
+        warning: 'bg-amber-500 text-white border-amber-300',
+        info: 'bg-slate-800 text-white border-sky-400'
+      };
+      const icons = {
+        success: 'fa-circle-check',
+        error: 'fa-circle-exclamation',
+        warning: 'fa-triangle-exclamation',
+        info: 'fa-circle-info'
+      };
+      toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border text-sm font-medium animate-fade-in ${colors[type] || colors.info}`;
+      toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-base shrink-0"></i><span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3600);
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function getThaiDateString() {
+      const months = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+      const now = new Date();
+      const d = now.getDate();
+      const m = months[now.getMonth()];
+      const y = now.getFullYear() + 543;
+      return `${d} ${m} พ.ศ. ${y}`;
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getCurrentStudentRecord() {
+      if (!state.currentUser || state.currentUser.role !== 'student') return null;
+      return state.students.find(s => s.username === state.currentUser.username) || null;
+    }
+
+    function openModal(htmlContent) {
+      const backdrop = document.getElementById('modal-backdrop');
+      const box = document.getElementById('modal-box');
+      box.innerHTML = htmlContent;
+      backdrop.classList.remove('hidden');
+      backdrop.classList.add('flex');
+    }
+
+    function closeModal() {
+      const backdrop = document.getElementById('modal-backdrop');
+      backdrop.classList.add('hidden');
+      backdrop.classList.remove('flex');
+    }
+
+    // ==================== MAIN RENDER ROUTER ====================
+    function renderApp() {
+      renderHeaderUserArea();
+      const root = document.getElementById('app-root');
+
+      if (!state.currentUser) {
+        root.innerHTML = renderLoginView();
+        return;
+      }
+
+      if (state.currentUser.role === 'admin') {
+        root.innerHTML = renderAdminView();
+        if (state.adminTab === 'dashboard') {
+          setTimeout(renderClassroomChart, 50);
+        }
+        return;
+      }
+
+      // Student Views
+      if (state.activeView === 'quiz') {
+        root.innerHTML = renderQuizView();
+      } else if (state.activeView === 'lesson') {
+        root.innerHTML = renderLessonDetailView();
+      } else if (state.activeView === 'certificate') {
+        root.innerHTML = renderCertificateView();
+      } else {
+        root.innerHTML = renderStudentDashboard();
+      }
+    }
+
+    function renderHeaderUserArea() {
+      const area = document.getElementById('header-user-area');
+      if (!state.currentUser) {
+        area.innerHTML = `
+          <div class="text-right text-xs text-white/90 hidden sm:block">
+            <p class="font-medium">ครูผู้สอน: ${SCHOOL_INFO.teacherName}</p>
+            <p class="opacity-80">ระบบเรียนออนไลน์ & วัดผลอัตโนมัติ</p>
+          </div>
+        `;
+        return;
+      }
+
+      const isStudent = state.currentUser.role === 'student';
+      area.innerHTML = `
+        <div class="flex items-center gap-2 sm:gap-3 bg-white/15 px-3 py-1.5 rounded-xl border border-white/25">
+          <div class="w-8 h-8 rounded-full bg-white text-sky-600 flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid ${isStudent ? 'fa-user-graduate' : 'fa-chalkboard-user'}"></i>
+          </div>
+          <div class="text-left leading-tight">
+            <p class="text-xs sm:text-sm font-semibold text-white">${escapeHtml(state.currentUser.name)}</p>
+            <p class="text-[11px] text-sky-100">${isStudent ? `รหัส: ${escapeHtml(state.currentUser.username)} | ห้อง ${escapeHtml(state.currentUser.classroom)}` : 'ผู้ดูแลระบบ / ครูผู้สอน'}</p>
+          </div>
+          ${state.gasUrl ? `
+            <button onclick="syncFromGoogleSheets(false)" title="ซิงค์ข้อมูลล่าสุด" class="ml-1 p-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white transition">
+              <i class="fa-solid fa-rotate text-xs"></i>
+            </button>
+          ` : ''}
+          <button onclick="handleLogout()" class="ml-1 px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold transition flex items-center gap-1 shadow">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span class="hidden sm:inline">ออกจากระบบ</span>
+          </button>
+        </div>
+      `;
+    }
+
+    // ==================== 1. LOGIN VIEW ====================
+    function renderLoginView() {
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center py-4 animate-fade-in">
+          <!-- Left Welcome & Course Overview -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-100 text-sky-800 text-xs font-semibold border border-sky-200">
+              <i class="fa-solid fa-sparkles text-sky-500"></i>
+              <span>สื่อการเรียนรู้ออนไลน์ ระดับชั้นมัธยมศึกษาปีที่ 3 (อายุ 14–15 ปี)</span>
+            </div>
+
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">
+              ยินดีต้อนรับสู่ห้องเรียนออนไลน์<br/>
+              <span style="color: #0080FF;">รายวิชา สร้างสรรค์สื่อ Animation</span>
+            </h2>
+
+            <p class="text-slate-600 text-base leading-relaxed">
+              เรียนรู้พื้นฐานการเป็นนักสร้างสรรค์ดิจิทัล บทบาทในตลาดแรงงานยุคใหม่ จริยธรรมและลิขสิทธิ์ในการใช้ปัญญาประดิษฐ์ (AI) การวางแผนเส้นทางอาชีพ และฝึกวิเคราะห์กรณีศึกษา พร้อมรับเกียรติบัตรออนไลน์ทันทีเมื่อผ่านเกณฑ์
+            </p>
+
+            <!-- 4-Step Roadmap Preview -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+              <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold shrink-0">1</div>
+                <div>
+                  <h3 class="font-bold text-slate-800 text-sm">ทดสอบก่อนเรียน (Pre-test)</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">ทำแบบทดสอบวัดพื้นฐานจำนวน 20 ข้อ</p>
+                </div>
+              </div>
+              <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0">2</div>
+                <div>
+                  <h3 class="font-bold text-slate-800 text-sm">ศึกษาบทเรียน & กรณีศึกษา</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">เนื้อหา 5 หน่วยการเรียนรู้ + กิจกรรมวิเคราะห์ผลกระทบ AI</p>
+                </div>
+              </div>
+              <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold shrink-0">3</div>
+                <div>
+                  <h3 class="font-bold text-slate-800 text-sm">ทดสอบหลังเรียน (Post-test)</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">ข้อสอบชุดเดียวกัน 20 ข้อ (ระบบสุ่มสลับข้อและตัวเลือก)</p>
+                </div>
+              </div>
+              <div class="bg-white p-4 rounded-2xl shadow-sm border border-sky-100 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold shrink-0">4</div>
+                <div>
+                  <h3 class="font-bold text-slate-800 text-sm">รับเกียรติบัตร (PDF)</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">ผ่านเกณฑ์ร้อยละ 80 ดาวน์โหลดเกียรติบัตรได้ทันที</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Login Card -->
+          <div class="lg:col-span-5">
+            <div class="glass-card rounded-3xl shadow-xl p-6 sm:p-8">
+              <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center text-white text-2xl shadow-lg mb-3" style="background: linear-gradient(135deg, #0080FF 0%, #38BDF8 100%);">
+                  <i class="fa-solid fa-right-to-bracket"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">เข้าสู่ระบบบทเรียนออนไลน์</h3>
+                <p class="text-xs text-slate-500 mt-1">กรอกชื่อผู้ใช้ (รหัสนักเรียน) และรหัสผ่านเพื่อเข้าเรียน</p>
+              </div>
+
+              <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 mb-1">ชื่อผู้ใช้ (Username / รหัสนักเรียน)</label>
+                  <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                      <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input id="login-username" type="text" required placeholder="เช่น 09356 หรือ admin"
+                      class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none text-sm transition" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 mb-1">รหัสผ่าน (Password)</label>
+                  <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                      <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input id="login-password" type="password" required placeholder="กรอกรหัสผ่าน"
+                      class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none text-sm transition" />
+                  </div>
+                </div>
+
+                <button type="submit" style="background-color: #0080FF;" class="w-full py-3 rounded-xl text-white font-bold text-sm hover:opacity-95 transition shadow-md flex items-center justify-center gap-2">
+                  <span>เข้าสู่ระบบ</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </form>
+
+              <!-- Quick Demo Accounts -->
+              <div class="mt-6 pt-5 border-t border-slate-200">
+                <p class="text-xs font-semibold text-slate-500 mb-2.5 text-center">บัญชีทดสอบระบบด่วน (คลิกเพื่อกรอกอัตโนมัติ):</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <button type="button" onclick="fillDemoLogin('67001', '1234')" class="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-medium transition text-center">
+                    <i class="fa-solid fa-user-graduate block mb-0.5 text-sky-600"></i>
+                    นักเรียนใหม่<br/><span class="text-[10px] opacity-75">67001 / 1234</span>
+                  </button>
+                  <button type="button" onclick="fillDemoLogin('67003', '1234')" class="p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium transition text-center">
+                    <i class="fa-solid fa-award block mb-0.5 text-emerald-600"></i>
+                    ผ่านเกณฑ์แล้ว<br/><span class="text-[10px] opacity-75">67003 / 1234</span>
+                  </button>
+                  <button type="button" onclick="fillDemoLogin('admin', '1234')" class="p-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-medium transition text-center">
+                    <i class="fa-solid fa-chalkboard-user block mb-0.5 text-indigo-600"></i>
+                    ครูผู้สอน (Admin)<br/><span class="text-[10px] opacity-75">admin / 1234</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function fillDemoLogin(u, p) {
+      document.getElementById('login-username').value = u;
+      document.getElementById('login-password').value = p;
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value.trim();
+
+      if (u === ADMIN_ACCOUNT.username && p === ADMIN_ACCOUNT.password) {
+        state.currentUser = ADMIN_ACCOUNT;
+        state.activeView = 'admin_dashboard';
+        localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify({ role: 'admin', username: u }));
+        showToast('ยินดีต้อนรับ ครูหทัยชนก ตระกูลจำลอง', 'success');
+        renderApp();
+        return;
+      }
+
+      // ถ้ามี URL ของ Google Sheets ให้ดึงข้อมูลล่าสุดก่อนตรวจสอบรหัสผ่าน เผื่อครูเพิ่งเพิ่มนักเรียนใหม่
+      if (state.gasUrl && !state.students.some(s => s.username === u)) {
+        await syncFromGoogleSheets(true);
+      }
+
+      const found = state.students.find(s => s.username === u && s.password === p);
+      if (found) {
+        state.currentUser = {
+          role: 'student',
+          username: found.username,
+          name: found.name,
+          classroom: found.classroom
+        };
+        state.activeView = 'student_dashboard';
+        localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify({ role: 'student', username: found.username }));
+        showToast(`สวัสดี ${found.name} ยินดีต้อนรับเข้าสู่บทเรียน`, 'success');
+        renderApp();
+      } else {
+        showToast('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง', 'error');
+      }
+    }
+
+    function handleLogout() {
+      state.currentUser = null;
+      state.activeView = 'login';
+      localStorage.removeItem(STORAGE_KEYS.SESSION);
+      renderApp();
+      showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
+    }
+
+    // ==================== 2. STUDENT DASHBOARD VIEW ====================
+    function renderStudentDashboard() {
+      const st = getCurrentStudentRecord();
+      if (!st) return '';
+
+      const totalLessons = state.lessons.length;
+      const completedLessonsCount = st.lessonsCompleted.filter(id => state.lessons.some(l => l.id === id)).length;
+      const allLessonsDone = totalLessons > 0 && completedLessonsCount >= totalLessons;
+      const totalQ = state.questions.length || 20;
+
+      const prePct = st.preCompleted && st.preScore !== null ? Math.round((st.preScore / totalQ) * 100) : 0;
+      const postPct = st.postCompleted && st.postScore !== null ? Math.round((st.postScore / totalQ) * 100) : 0;
+      const isPassed = st.postCompleted && postPct >= SCHOOL_INFO.passPercentage;
+
+      // Overall progress calculation (Pre 20% + Lessons 50% + Post 30%)
+      let overallPct = 0;
+      if (st.preCompleted) overallPct += 20;
+      if (totalLessons > 0) overallPct += Math.round((completedLessonsCount / totalLessons) * 50);
+      if (st.postCompleted) overallPct += 30;
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Student Welcome Banner -->
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-1">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-700">ห้องเรียน ${escapeHtml(st.classroom)}</span>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">รหัสนักเรียน ${escapeHtml(st.username)}</span>
+              </div>
+              <h2 class="text-2xl font-bold text-slate-900">สวัสดี, ${escapeHtml(st.name)}</h2>
+              <p class="text-sm text-slate-500 mt-1">ปฏิบัติตามขั้นตอนการเรียนรู้ทั้ง 4 ขั้นตอนด้านล่างให้ครบถ้วนเพื่อรับเกียรติบัตรออนไลน์</p>
+            </div>
+
+            <!-- Overall Progress Bar -->
+            <div class="w-full lg:w-80 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div class="flex justify-between items-center text-xs font-bold mb-1.5">
+                <span class="text-slate-600">ความก้าวหน้าการเรียนรวม</span>
+                <span style="color: #0080FF;">${overallPct}%</span>
+              </div>
+              <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500" style="width: ${overallPct}%; background: linear-gradient(90deg, #0080FF, #38BDF8);"></div>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-2">
+                ${isPassed ? '🎉 ยินดีด้วย! คุณผ่านเกณฑ์ร้อยละ 80 และรับเกียรติบัตรได้แล้ว' : 'ศึกษาบทเรียนให้ครบและทำแบบทดสอบหลังเรียนให้ได้อย่างน้อยร้อยละ 80'}
+              </p>
+            </div>
+          </div>
+
+          <!-- 4-Step Learning Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Step 1: Pre-test -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border-2 ${st.preCompleted ? 'border-emerald-400' : 'border-sky-400'} flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 text-sky-700">ขั้นตอนที่ 1</span>
+                  ${st.preCompleted
+                    ? '<span class="text-xs font-bold text-emerald-600 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> เสร็จสิ้น</span>'
+                    : '<span class="text-xs font-bold text-amber-600">รอดำเนินการ</span>'}
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">ทดสอบก่อนเรียน (Pre-test)</h3>
+                <p class="text-xs text-slate-500 mt-1">แบบทดสอบวัดความรู้พื้นฐานจำนวน ${totalQ} ข้อ</p>
+                ${st.preCompleted ? `
+                  <div class="mt-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
+                    <p class="text-xs text-emerald-700">คะแนนก่อนเรียนของคุณ</p>
+                    <p class="text-xl font-bold text-emerald-800">${st.preScore} / ${totalQ} <span class="text-xs font-normal">(${prePct}%)</span></p>
+                  </div>
+                ` : ''}
+              </div>
+              <button onclick="startQuiz('pre')" class="mt-4 w-full py-2.5 rounded-xl font-semibold text-xs transition ${st.preCompleted ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'text-white shadow-md hover:opacity-95'}" style="${st.preCompleted ? '' : 'background-color: #0080FF;'}">
+                ${st.preCompleted ? '<i class="fa-solid fa-check mr-1"></i> ทำแบบทดสอบก่อนเรียนแล้ว' : '<i class="fa-solid fa-play mr-1"></i> เริ่มทำ Pre-test'}
+              </button>
+            </div>
+
+            <!-- Step 2: Lessons -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border-2 ${allLessonsDone ? 'border-emerald-400' : (st.preCompleted ? 'border-sky-400' : 'border-slate-200 opacity-75')} flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-100 text-indigo-700">ขั้นตอนที่ 2</span>
+                  <span class="text-xs font-bold ${allLessonsDone ? 'text-emerald-600' : 'text-slate-500'}">${completedLessonsCount} / ${totalLessons} หน่วย</span>
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">ศึกษาบทเรียน & กรณีศึกษา</h3>
+                <p class="text-xs text-slate-500 mt-1">ศึกษาเนื้อหาครบทั้ง ${totalLessons} หน่วย และส่งคำตอบวิเคราะห์กรณีศึกษา</p>
+                <div class="mt-3 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-indigo-500 rounded-full" style="width: ${totalLessons ? Math.round((completedLessonsCount/totalLessons)*100) : 0}%;"></div>
+                </div>
+              </div>
+              <a href="#lessons-section" class="mt-4 w-full py-2.5 rounded-xl font-semibold text-xs text-center block transition ${st.preCompleted ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md' : 'bg-slate-200 text-slate-500 pointer-events-none'}">
+                ${st.preCompleted ? '<i class="fa-solid fa-book-open mr-1"></i> เลือกบทเรียนด้านล่าง' : '<i class="fa-solid fa-lock mr-1"></i> ต้องทำ Pre-test ก่อน'}
+              </a>
+            </div>
+
+            <!-- Step 3: Post-test -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border-2 ${isPassed ? 'border-emerald-400' : (allLessonsDone ? 'border-sky-400' : 'border-slate-200 opacity-75')} flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-700">ขั้นตอนที่ 3</span>
+                  ${st.postCompleted
+                    ? `<span class="text-xs font-bold ${isPassed ? 'text-emerald-600' : 'text-rose-600'}">${isPassed ? 'ผ่านเกณฑ์' : 'ยังไม่ถึง 80%'}</span>`
+                    : '<span class="text-xs font-bold text-slate-400">เกณฑ์ 80%</span>'}
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">ทดสอบหลังเรียน (Post-test)</h3>
+                <p class="text-xs text-slate-500 mt-1">ข้อสอบชุดเดียวกัน ${totalQ} ข้อ (สุ่มสลับข้อและตัวเลือก)</p>
+                ${st.postCompleted ? `
+                  <div class="mt-3 p-2.5 rounded-xl ${isPassed ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'} border text-center">
+                    <p class="text-xs ${isPassed ? 'text-emerald-700' : 'text-rose-700'}">คะแนนหลังเรียนล่าสุด</p>
+                    <p class="text-xl font-bold ${isPassed ? 'text-emerald-800' : 'text-rose-800'}">${st.postScore} / ${totalQ} <span class="text-xs font-normal">(${postPct}%)</span></p>
+                  </div>
+                ` : ''}
+              </div>
+              <button onclick="startQuiz('post')" ${allLessonsDone ? '' : 'disabled'} class="mt-4 w-full py-2.5 rounded-xl font-semibold text-xs transition ${allLessonsDone ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-md' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}">
+                ${!allLessonsDone
+                  ? '<i class="fa-solid fa-lock mr-1"></i> ศึกษาบทเรียนให้ครบก่อน'
+                  : (st.postCompleted ? '<i class="fa-solid fa-rotate-right mr-1"></i> ทำ Post-test อีกครั้ง (สลับข้อ)' : '<i class="fa-solid fa-pen-to-square mr-1"></i> เริ่มทำ Post-test')}
+              </button>
+            </div>
+
+            <!-- Step 4: Certificate -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border-2 ${isPassed ? 'border-emerald-500 bg-gradient-to-b from-white to-emerald-50/40' : 'border-slate-200 opacity-75'} flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-700">ขั้นตอนที่ 4</span>
+                  ${isPassed
+                    ? '<span class="text-xs font-bold text-emerald-600"><i class="fa-solid fa-unlock"></i> ปลดล็อกแล้ว</span>'
+                    : '<span class="text-xs font-bold text-slate-400"><i class="fa-solid fa-lock"></i> ล็อกอยู่</span>'}
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">เกียรติบัตรออนไลน์ (PDF)</h3>
+                <p class="text-xs text-slate-500 mt-1">รับเกียรติบัตรรายวิชาสร้างสรรค์สื่อ Animation เมื่อสอบผ่านร้อยละ 80 ขึ้นไป</p>
+              </div>
+              <button onclick="openCertificateView()" ${isPassed ? '' : 'disabled'} class="mt-4 w-full py-2.5 rounded-xl font-semibold text-xs transition ${isPassed ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}">
+                ${isPassed ? '<i class="fa-solid fa-award mr-1"></i> ดูและดาวน์โหลดเกียรติบัตร PDF' : '<i class="fa-solid fa-lock mr-1"></i> ต้องผ่าน Post-test ≥ 80%'}
+              </button>
+            </div>
+          </div>
+
+          <!-- Lessons List Section -->
+          <div id="lessons-section" class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-5 pb-4 border-b border-slate-100">
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-layer-group" style="color: #0080FF;"></i>
+                  <span>เนื้อหาบทเรียน รายวิชาสร้างสรรค์สื่อ Animation</span>
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">คลิกเข้าศึกษาทีละหน่วยการเรียนรู้ และบันทึกความก้าวหน้าเมื่อศึกษาจบ</p>
+              </div>
+              ${!st.preCompleted ? `
+                <span class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
+                  <i class="fa-solid fa-circle-info mr-1"></i> กรุณาทำแบบทดสอบก่อนเรียน (ขั้นตอนที่ 1) ก่อนเข้าเรียน
+                </span>
+              ` : ''}
+            </div>
+
+            <div class="space-y-3.5">
+              ${state.lessons.map((lesson, idx) => {
+                const done = st.lessonsCompleted.includes(lesson.id);
+                const locked = !st.preCompleted;
+                return `
+                  <div class="p-4 sm:p-5 rounded-2xl border transition ${done ? 'bg-emerald-50/40 border-emerald-200' : (locked ? 'bg-slate-50 border-slate-200 opacity-75' : 'bg-white border-slate-200 hover:border-sky-400 hover:shadow-md')}">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg shrink-0 ${done ? 'bg-emerald-100 text-emerald-600' : 'bg-sky-100 text-sky-600'}">
+                          <i class="fa-solid ${escapeHtml(lesson.icon || 'fa-film')}"></i>
+                        </div>
+                        <div>
+                          <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-sky-600">บทที่ ${idx + 1}</span>
+                            <span class="text-xs text-slate-400">• <i class="fa-regular fa-clock"></i> ${escapeHtml(lesson.duration)}</span>
+                            ${lesson.isCaseStudy ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-100 text-purple-700">กิจกรรมหลัก: กรณีศึกษา</span>' : ''}
+                            ${done ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700"><i class="fa-solid fa-check mr-0.5"></i> ศึกษาแล้ว</span>' : ''}
+                          </div>
+                          <h4 class="font-bold text-slate-900 text-base">${escapeHtml(lesson.title)}</h4>
+                          <p class="text-xs text-slate-500 mt-1 line-clamp-2">${escapeHtml(lesson.summary)}</p>
+                        </div>
+                      </div>
+                      <button onclick="openLesson('${escapeHtml(lesson.id)}')" ${locked ? 'disabled' : ''} class="px-5 py-2.5 rounded-xl text-xs font-bold shrink-0 transition ${locked ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : (done ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'text-white hover:opacity-95 shadow')}" style="${locked || done ? '' : 'background-color: #0080FF;'}">
+                        ${locked ? '<i class="fa-solid fa-lock mr-1"></i> ล็อกอยู่' : (done ? '<i class="fa-solid fa-book-open-reader mr-1"></i> ทบทวนบทเรียน' : '<i class="fa-solid fa-play mr-1"></i> เข้าสู่บทเรียน')}
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== 3. LESSON DETAIL & CASE STUDY VIEW ====================
+    function openLesson(lessonId) {
+      state.activeLessonId = lessonId;
+      state.activeView = 'lesson';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderApp();
+    }
+
+    function renderLessonDetailView() {
+      const st = getCurrentStudentRecord();
+      const lessonIndex = state.lessons.findIndex(l => l.id === state.activeLessonId);
+      const lesson = state.lessons[lessonIndex];
+      if (!st || !lesson) {
+        state.activeView = 'student_dashboard';
+        return renderStudentDashboard();
+      }
+
+      const isDone = st.lessonsCompleted.includes(lesson.id);
+      const nextLesson = state.lessons[lessonIndex + 1];
+
+      return `
+        <div class="max-w-4xl mx-auto space-y-6 animate-fade-in">
+          <!-- Back Breadcrumb -->
+          <div class="flex items-center justify-between">
+            <button onclick="backToStudentDashboard()" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-sky-600 transition">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span>กลับหน้าหลักบทเรียน</span>
+            </button>
+            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-sky-100 text-sky-800">
+              หน่วยที่ ${lessonIndex + 1} จาก ${state.lessons.length}
+            </span>
+          </div>
+
+          <!-- Lesson Content Card -->
+          <article class="bg-white rounded-3xl shadow-sm border border-sky-100 overflow-hidden">
+            <div class="p-6 sm:p-8 text-white" style="background: linear-gradient(135deg, #0080FF 0%, #0284C7 100%);">
+              <div class="flex items-center gap-2 text-xs font-semibold text-sky-100 mb-2">
+                <i class="fa-solid ${escapeHtml(lesson.icon || 'fa-film')}"></i>
+                <span>เวลาศึกษาโดยประมาณ ${escapeHtml(lesson.duration)}</span>
+                ${isDone ? '<span class="ml-2 px-2.5 py-0.5 rounded-full bg-emerald-400/30 text-white border border-white/40">✓ ศึกษาจบหน่วยนี้แล้ว</span>' : ''}
+              </div>
+              <h2 class="text-xl sm:text-2xl font-bold leading-snug">${escapeHtml(lesson.title)}</h2>
+              <p class="text-sm text-sky-100 mt-1.5">${escapeHtml(lesson.subtitle)}</p>
+            </div>
+
+            <div class="p-6 sm:p-8">
+              <!-- Rich HTML Lesson Body -->
+              <div class="lesson-prose text-sm sm:text-base">
+                ${lesson.contentHtml}
+              </div>
+
+              <!-- Key Takeaways Box -->
+              ${Array.isArray(lesson.keyTakeaways) && lesson.keyTakeaways.length > 0 ? `
+                <div class="mt-8 p-5 rounded-2xl bg-amber-50 border border-amber-200">
+                  <h4 class="font-bold text-amber-900 text-sm flex items-center gap-2 mb-2.5">
+                    <i class="fa-solid fa-star text-amber-500"></i>
+                    <span>สรุปประเด็นสำคัญประจำหน่วยการเรียนรู้</span>
+                  </h4>
+                  <ul class="space-y-1.5 text-xs sm:text-sm text-amber-900">
+                    ${lesson.keyTakeaways.map(item => `
+                      <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-amber-600 mt-1 shrink-0"></i>
+                        <span>${escapeHtml(item)}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+
+              <!-- Case Study Interactive Activity (If applicable) -->
+              ${lesson.isCaseStudy ? `
+                <div class="mt-8 p-6 rounded-2xl bg-purple-50 border-2 border-purple-200">
+                  <div class="flex items-center gap-2 text-purple-800 font-bold text-base mb-2">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span>กิจกรรมหลัก: บันทึกผลการวิเคราะห์กรณีศึกษา</span>
+                  </div>
+                  <p class="text-xs sm:text-sm text-purple-900 mb-4 leading-relaxed">
+                    ${escapeHtml(lesson.caseStudyPrompt)}
+                  </p>
+                  <textarea id="case-study-input" rows="5" placeholder="พิมพ์คำตอบการวิเคราะห์กรณีศึกษาของนักเรียนที่นี่..."
+                    class="w-full p-4 rounded-xl border border-purple-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none text-sm bg-white">${escapeHtml(st.caseStudyAnswer || '')}</textarea>
+                  <div class="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <span class="text-xs text-purple-700"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> คำตอบจะถูกส่งให้ครูหทัยชนกตรวจในระบบทันที</span>
+                    <button onclick="submitCaseStudyAndComplete('${escapeHtml(lesson.id)}')" class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md transition">
+                      <i class="fa-solid fa-paper-plane mr-1.5"></i> ส่งคำตอบกรณีศึกษา & จบบทเรียน
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <!-- Standard Lesson Completion Action -->
+                <div class="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <button onclick="markLessonCompleted('${escapeHtml(lesson.id)}')" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-white shadow-md transition ${isDone ? 'bg-emerald-600 hover:bg-emerald-700' : 'hover:opacity-95'}" style="${isDone ? '' : 'background-color: #0080FF;'}">
+                    <i class="fa-solid fa-circle-check mr-1.5"></i>
+                    ${isDone ? 'บันทึกความก้าวหน้าเรียบร้อยแล้ว' : 'บันทึกว่าศึกษาจบบทนี้แล้ว'}
+                  </button>
+
+                  ${nextLesson ? `
+                    <button onclick="openLesson('${escapeHtml(nextLesson.id)}')" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition">
+                      <span>บทถัดไป: หน่วยที่ ${lessonIndex + 2}</span>
+                      <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                    </button>
+                  ` : `
+                    <button onclick="backToStudentDashboard()" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm transition shadow">
+                      <span>กลับหน้าหลักเพื่อทำ Post-test</span>
+                      <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                    </button>
+                  `}
+                </div>
+              `}
+            </div>
+          </article>
+        </div>
+      `;
+    }
+
+    async function markLessonCompleted(lessonId) {
+      const st = getCurrentStudentRecord();
+      if (!st) return;
+      if (!st.lessonsCompleted.includes(lessonId)) {
+        st.lessonsCompleted.push(lessonId);
+        saveLocalCache();
+        showToast('บันทึกความก้าวหน้าบทเรียนเรียบร้อยแล้ว!', 'success');
+        await postToGoogleSheets({ action: 'saveStudentProgress', student: st }, true);
+      } else {
+        showToast('คุณได้บันทึกการศึกษาบทนี้ไว้แล้ว', 'info');
+      }
+      renderApp();
+    }
+
+    async function submitCaseStudyAndComplete(lessonId) {
+      const st = getCurrentStudentRecord();
+      if (!st) return;
+      const ans = document.getElementById('case-study-input').value.trim();
+      if (ans.length < 15) {
+        showToast('กรุณาเขียนวิเคราะห์กรณีศึกษาอย่างน้อย 15 ตัวอักษร', 'warning');
+        return;
+      }
+      st.caseStudyAnswer = ans;
+      if (!st.lessonsCompleted.includes(lessonId)) {
+        st.lessonsCompleted.push(lessonId);
+      }
+      saveLocalCache();
+      showToast('ส่งคำตอบกรณีศึกษาและบันทึกจบบทเรียนเรียบร้อยแล้ว!', 'success');
+      await postToGoogleSheets({ action: 'saveStudentProgress', student: st }, true);
+      renderApp();
+    }
+
+    function backToStudentDashboard() {
+      state.activeView = 'student_dashboard';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderApp();
+    }
+
+    // ==================== 4. QUIZ VIEW (PRE-TEST & POST-TEST SHUFFLED) ====================
+    function startQuiz(mode) {
+      const st = getCurrentStudentRecord();
+      if (!st) return;
+
+      if (mode === 'pre' && st.preCompleted) {
+        showToast('คุณทำแบบทดสอบก่อนเรียน (Pre-test) เรียบร้อยแล้ว', 'info');
+        return;
+      }
+
+      // เตรียมชุดข้อสอบ 20 ข้อ
+      let prepared = state.questions.map((q, idx) => {
+        // สร้างตัวเลือกพร้อมระบุว่าตัวเลือกไหนคือคำตอบที่ถูก
+        const choiceObjs = q.choices.map((text, cIdx) => ({
+          text,
+          isCorrect: cIdx === Number(q.correctIndex)
+        }));
+
+        // ถ้าเป็น Post-test ให้สลับทั้งลำดับข้อสอบ และสลับลำดับตัวเลือก ก-ง!
+        const finalChoices = mode === 'post' ? shuffleArray(choiceObjs) : choiceObjs;
+
+        return {
+          id: q.id,
+          question: q.question,
+          choices: finalChoices,
+          explanation: q.explanation
+        };
+      });
+
+      if (mode === 'post') {
+        prepared = shuffleArray(prepared);
+      }
+
+      state.quizMode = mode;
+      state.activeQuizQuestions = prepared;
+      state.quizAnswers = {};
+      state.currentQuizIndex = 0;
+      state.activeView = 'quiz';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderApp();
+    }
+
+    function renderQuizView() {
+      const qList = state.activeQuizQuestions;
+      const total = qList.length;
+      const idx = state.currentQuizIndex;
+      const currentQ = qList[idx];
+      const answeredCount = Object.keys(state.quizAnswers).length;
+      const isPre = state.quizMode === 'pre';
+      const thaiLetters = ['ก', 'ข', 'ค', 'ง'];
+
+      return `
+        <div class="max-w-4xl mx-auto space-y-5 animate-fade-in">
+          <!-- Quiz Top Header -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="px-3 py-1 rounded-full text-xs font-bold ${isPre ? 'bg-sky-100 text-sky-700' : 'bg-amber-100 text-amber-800'}">
+                ${isPre ? 'แบบทดสอบก่อนเรียน (Pre-test)' : 'แบบทดสอบหลังเรียน (Post-test • สลับข้ออัตโนมัติ)'}
+              </span>
+              <h2 class="text-lg font-bold text-slate-900 mt-1.5">รายวิชา สร้างสรรค์สื่อ Animation (${total} ข้อ)</h2>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <p class="text-xs text-slate-500">ตอบแล้ว</p>
+                <p class="text-base font-bold text-sky-600">${answeredCount} / ${total} ข้อ</p>
+              </div>
+              <button onclick="cancelQuiz()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition">
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+
+          <!-- Question Navigator Grid -->
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
+            <p class="text-xs font-semibold text-slate-500 mb-2">แผนผังข้อสอบ (คลิกเพื่อข้ามไปยังข้อที่ต้องการ):</p>
+            <div class="grid grid-cols-10 sm:grid-cols-20 gap-1.5">
+              ${qList.map((item, i) => {
+                const isCurrent = i === idx;
+                const isAnswered = state.quizAnswers[i] !== undefined;
+                let cls = 'h-8 rounded-lg text-xs font-bold transition ';
+                if (isCurrent) {
+                  cls += 'ring-2 ring-sky-500 bg-sky-600 text-white';
+                } else if (isAnswered) {
+                  cls += 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+                } else {
+                  cls += 'bg-slate-100 text-slate-600 hover:bg-slate-200';
+                }
+                return `<button type="button" onclick="jumpToQuizQuestion(${i})" class="${cls}">${i + 1}</button>`;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Current Question Card -->
+          <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-sky-100">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-sm font-bold text-sky-600">ข้อที่ ${idx + 1} จาก ${total}</span>
+              <span class="text-xs text-slate-400">เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว</span>
+            </div>
+
+            <h3 class="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed mb-6">
+              ${escapeHtml(currentQ.question)}
+            </h3>
+
+            <div class="space-y-3">
+              ${currentQ.choices.map((ch, cIdx) => {
+                const selected = state.quizAnswers[idx] === cIdx;
+                return `
+                  <button type="button" onclick="selectQuizChoice(${idx}, ${cIdx})"
+                    class="w-full text-left p-4 rounded-2xl border-2 transition flex items-start gap-3.5 ${selected ? 'border-sky-500 bg-sky-50 shadow-sm' : 'border-slate-200 hover:border-sky-300 hover:bg-slate-50'}">
+                    <span class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 ${selected ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-700'}">
+                      ${thaiLetters[cIdx]}
+                    </span>
+                    <span class="text-sm sm:text-base text-slate-800 pt-1">${escapeHtml(ch.text)}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between gap-3">
+              <button type="button" onclick="prevQuizQuestion()" ${idx === 0 ? 'disabled' : ''}
+                class="px-5 py-2.5 rounded-xl font-semibold text-sm transition ${idx === 0 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'}">
+                <i class="fa-solid fa-chevron-left mr-1"></i> ข้อก่อนหน้า
+              </button>
+
+              ${idx < total - 1 ? `
+                <button type="button" onclick="nextQuizQuestion()" style="background-color: #0080FF;"
+                  class="px-6 py-2.5 rounded-xl font-bold text-sm text-white hover:opacity-95 shadow transition">
+                  <span>ข้อถัดไป</span>
+                  <i class="fa-solid fa-chevron-right ml-1"></i>
+                </button>
+              ` : `
+                <button type="button" onclick="submitQuiz()"
+                  class="px-6 py-2.5 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition">
+                  <i class="fa-solid fa-paper-plane mr-1.5"></i> ส่งคำตอบทั้งหมด (${answeredCount}/${total})
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectQuizChoice(qIdx, cIdx) {
+      state.quizAnswers[qIdx] = cIdx;
+      renderApp();
+    }
+
+    function jumpToQuizQuestion(i) {
+      state.currentQuizIndex = i;
+      renderApp();
+    }
+
+    function prevQuizQuestion() {
+      if (state.currentQuizIndex > 0) {
+        state.currentQuizIndex--;
+        renderApp();
+      }
+    }
+
+    function nextQuizQuestion() {
+      if (state.currentQuizIndex < state.activeQuizQuestions.length - 1) {
+        state.currentQuizIndex++;
+        renderApp();
+      }
+    }
+
+    function cancelQuiz() {
+      state.activeView = 'student_dashboard';
+      renderApp();
+    }
+
+    async function submitQuiz() {
+      const total = state.activeQuizQuestions.length;
+      const answeredCount = Object.keys(state.quizAnswers).length;
+      if (answeredCount < total) {
+        const firstUnanswered = state.activeQuizQuestions.findIndex((_, i) => state.quizAnswers[i] === undefined);
+        showToast(`คุณยังทำข้อสอบไม่ครบ (เหลืออีก ${total - answeredCount} ข้อ) ระบบพาไปยังข้อที่ ${firstUnanswered + 1}`, 'warning');
+        state.currentQuizIndex = firstUnanswered;
+        renderApp();
+        return;
+      }
+
+      let score = 0;
+      state.activeQuizQuestions.forEach((q, i) => {
+        const chosenIdx = state.quizAnswers[i];
+        if (chosenIdx !== undefined && q.choices[chosenIdx] && q.choices[chosenIdx].isCorrect) {
+          score++;
+        }
+      });
+
+      const st = getCurrentStudentRecord();
+      if (!st) return;
+
+      const pct = Math.round((score / total) * 100);
+      const isPre = state.quizMode === 'pre';
+
+      if (isPre) {
+        st.preScore = score;
+        st.preCompleted = true;
+      } else {
+        st.postScore = score;
+        st.postCompleted = true;
+        if (pct >= SCHOOL_INFO.passPercentage && !st.certDate) {
+          st.certDate = getThaiDateString();
+        }
+      }
+
+      saveLocalCache();
+      await postToGoogleSheets({ action: 'saveStudentProgress', student: st }, true);
+
+      // Show Result Modal
+      const passedPost = !isPre && pct >= SCHOOL_INFO.passPercentage;
+      openModal(`
+        <div class="text-center py-2">
+          <div class="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl mb-4 ${isPre ? 'bg-sky-100 text-sky-600' : (passedPost ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600')}">
+            <i class="fa-solid ${isPre ? 'fa-clipboard-check' : (passedPost ? 'fa-award' : 'fa-rotate-right')}"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900">
+            ${isPre ? 'บันทึกคะแนนทดสอบก่อนเรียนเรียบร้อย!' : (passedPost ? 'ยินดีด้วย! คุณสอบผ่านเกณฑ์ร้อยละ 80' : 'คะแนนยังไม่ถึงเกณฑ์ร้อยละ 80')}
+          </h3>
+          <p class="text-sm text-slate-500 mt-1">${escapeHtml(st.name)} (${escapeHtml(st.classroom)})</p>
+
+          <div class="my-6 p-5 rounded-2xl bg-slate-50 border border-slate-200">
+            <p class="text-xs text-slate-500 uppercase tracking-wider font-semibold">ผลคะแนนของคุณ</p>
+            <p class="text-4xl font-bold mt-1" style="color: #0080FF;">${score} <span class="text-lg text-slate-400 font-normal">/ ${total} คะแนน</span></p>
+            <p class="text-sm font-bold mt-1 ${pct >= 80 ? 'text-emerald-600' : 'text-slate-700'}">คิดเป็นร้อยละ ${pct}%</p>
+            ${!isPre && st.preScore !== null ? `
+              <p class="text-xs text-slate-500 mt-2 pt-2 border-t border-slate-200">
+                เปรียบเทียบก่อนเรียน (${st.preScore} คะแนน) → หลังเรียน (${score} คะแนน) :
+                <span class="font-bold ${score >= st.preScore ? 'text-emerald-600' : 'text-rose-600'}">
+                  ${score >= st.preScore ? `+${score - st.preScore}` : `${score - st.preScore}`} คะแนน
+                </span>
+              </p>
+            ` : ''}
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            ${passedPost ? `
+              <button onclick="closeModal(); openCertificateView();" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition">
+                <i class="fa-solid fa-award mr-1.5"></i> รับเกียรติบัตร (PDF) ทันที
+              </button>
+            ` : ''}
+            <button onclick="closeModal(); backToStudentDashboard();" style="background-color: #0080FF;" class="px-6 py-3 rounded-xl text-white font-bold text-sm hover:opacity-95 transition">
+              ${isPre ? 'เข้าสู่บทเรียนทั้ง 5 หน่วย' : (passedPost ? 'กลับหน้าหลัก' : 'ทบทวนบทเรียนและลองสอบใหม่')}
+            </button>
+          </div>
+        </div>
+      `);
+    }
+
+    // ==================== 5. CERTIFICATE VIEW & PDF EXPORT ====================
+    function openCertificateView() {
+      const st = getCurrentStudentRecord();
+      if (!st) return;
+      const totalQ = state.questions.length || 20;
+      const postPct = st.postCompleted && st.postScore !== null ? Math.round((st.postScore / totalQ) * 100) : 0;
+      if (postPct < SCHOOL_INFO.passPercentage) {
+        showToast('ต้องสอบหลังเรียนผ่านเกณฑ์ร้อยละ 80 ขึ้นไปจึงจะรับเกียรติบัตรได้', 'warning');
+        return;
+      }
+      if (!st.certDate) {
+        st.certDate = getThaiDateString();
+        saveLocalCache();
+      }
+      state.activeView = 'certificate';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderApp();
+    }
+
+function renderCertificateView() {
+      const st = getCurrentStudentRecord();
+      if (!st) return '';
+      const totalQ = state.questions.length || 20;
+      const postPct = Math.round((st.postScore / totalQ) * 100);
+      const issueDate = st.certDate || getThaiDateString();
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Controls Bar -->
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <button onclick="backToStudentDashboard()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition shrink-0">
+                <i class="fa-solid fa-arrow-left mr-1"></i> กลับหน้าหลัก
+              </button>
+              <div>
+                <h2 class="text-lg font-bold text-slate-900">เกียรติบัตรออนไลน์ผ่านเกณฑ์การเรียนรู้</h2>
+                <p class="text-xs text-slate-500">ตรวจสอบความถูกต้องของชื่อ-นามสกุล คะแนน และค่าร้อยละ ก่อนดาวน์โหลด</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button id="btn-download-img" onclick="downloadCertificateImage()" class="px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-image text-base"></i>
+                <span>ดาวน์โหลดรูปภาพ (PNG)</span>
+              </button>
+
+              <button id="btn-download-pdf" onclick="downloadCertificatePDF()" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf text-base"></i>
+                <span>ดาวน์โหลดเกียรติบัตร (PDF)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Responsive Scrollable Wrapper for A4 Landscape Certificate -->
+          <div class="overflow-x-auto pb-4 flex justify-start lg:justify-center">
+            <div id="certificate-capture" class="shadow-2xl shrink-0">
+              <!-- รูปพื้นหลังเกียรติบัตรโรงเรียนพระบางวิทยา -->
+              <img src="certificate_bg.png" alt="พื้นหลังเกียรติบัตร"
+                style="width: 1024px; height: 724px; display: block; user-select: none;" />
+
+              <!-- 1. ชื่อ - นามสกุล นักเรียน -->
+              <div style="position: absolute; left: 160px; right: 160px; top: 274px; height: 60px; display: flex; align-items: center; justify-content: center; text-align: center;">
+                <span style="font-family: 'Prompt', 'Sarabun', sans-serif; font-weight: 700; font-size: 36px; color: #1D4ED8; letter-spacing: 0.3px;">
+                  ${escapeHtml(st.name)}
+                </span>
+              </div>
+
+              <!-- 2. คะแนนสอบหลังเรียน (วางในช่องว่างระหว่าง 'ด้วยคะแนน' และ 'จาก 20 คะแนน') -->
+              <div style="position: absolute; left: 350px; width: 74px; top: 442px; height: 42px; display: flex; align-items: center; justify-content: center; text-align: center;">
+                <span style="font-family: 'Prompt', 'Sarabun', sans-serif; font-weight: 700; font-size: 24px; color: #1D4ED8;">
+                  ${escapeHtml(String(st.postScore))}
+                </span>
+              </div>
+
+              <!-- 3. ค่าร้อยละ (วางต่อท้าย 'คิดเป็นร้อยละ') -->
+              <div style="position: absolute; left: 750px; width: 90px; top: 442px; height: 42px; display: flex; align-items: center; justify-content: flex-start; text-align: left;">
+                <span style="font-family: 'Prompt', 'Sarabun', sans-serif; font-weight: 700; font-size: 24px; color: #1D4ED8;">
+                  ${escapeHtml(String(postPct))}
+                </span>
+              </div>
+
+              <!-- 4. วันที่ออกเกียรติบัตร (วางต่อท้าย 'ให้ไว้ ณ วันที่') -->
+              <div style="position: absolute; left: 420px; width: 325px; top: 492px; height: 40px; display: flex; align-items: center; justify-content: flex-start; text-align: left;">
+                <span style="font-family: 'Prompt', 'Sarabun', sans-serif; font-weight: 600; font-size: 24px; color: #1E293B;">
+                  ${escapeHtml(issueDate)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function downloadCertificateImage() {
+      const btn = document.getElementById('btn-download-img');
+      const target = document.getElementById('certificate-capture');
+      const st = getCurrentStudentRecord();
+      if (!target || !st) return;
+
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังสร้างรูปภาพ...</span>';
+
+      try {
+        await document.fonts.ready;
+        const canvas = await html2canvas(target, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+        const link = document.createElement('a');
+        link.download = `Certificate_${st.username}_Animation.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('ดาวน์โหลดรูปภาพเกียรติบัตร (PNG) สำเร็จ!', 'success');
+      } catch (err) {
+        showToast('เกิดข้อผิดพลาดในการสร้างรูปภาพ: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+    }
+
+    async function downloadCertificatePDF() {
+      const btn = document.getElementById('btn-download-pdf');
+      const target = document.getElementById('certificate-capture');
+      const st = getCurrentStudentRecord();
+      if (!target || !st) return;
+
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>กำลังสร้างไฟล์ PDF...</span>';
+
+      try {
+        await document.fonts.ready;
+        const canvas = await html2canvas(target, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Certificate_${st.username}_Animation.pdf`);
+        showToast('ดาวน์โหลดเกียรติบัตร PDF สำเร็จ!', 'success');
+      } catch (err) {
+        showToast('เกิดข้อผิดพลาดในการสร้าง PDF: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+    }
+
+    // ==================== 6. ADMIN / TEACHER DASHBOARD VIEW ====================
+    function renderAdminView() {
+      const tabs = [
+        { id: 'dashboard', label: 'แดชบอร์ดรายห้องเรียน', icon: 'fa-chart-pie' },
+        { id: 'lessons', label: `จัดการบทเรียน (${state.lessons.length})`, icon: 'fa-book-open' },
+        { id: 'questions', label: `คลังข้อสอบ (${state.questions.length})`, icon: 'fa-list-check' },
+        { id: 'students', label: `รายชื่อนักเรียน (${state.students.length})`, icon: 'fa-users' },
+        { id: 'sheets', label: 'เชื่อมต่อ Google Sheets', icon: 'fa-table' }
+      ];
+
+      return `
+        <div class="space-y-6 animate-fade-in">
+          <!-- Admin Sub-navigation -->
+          <div class="bg-white rounded-2xl p-2 shadow-sm border border-sky-100 flex flex-wrap gap-1.5">
+            ${tabs.map(t => {
+              const active = state.adminTab === t.id;
+              return `
+                <button onclick="switchAdminTab('${t.id}')"
+                  class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-2 ${active ? 'text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}"
+                  style="${active ? 'background-color: #0080FF;' : ''}">
+                  <i class="fa-solid ${t.icon}"></i>
+                  <span>${t.label}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Active Admin Tab Content -->
+          ${state.adminTab === 'dashboard' ? renderAdminDashboardTab() : ''}
+          ${state.adminTab === 'lessons' ? renderAdminLessonsTab() : ''}
+          ${state.adminTab === 'questions' ? renderAdminQuestionsTab() : ''}
+          ${state.adminTab === 'students' ? renderAdminStudentsTab() : ''}
+          ${state.adminTab === 'sheets' ? renderAdminSheetsTab() : ''}
+        </div>
+      `;
+    }
+
+    function switchAdminTab(tabId) {
+      state.adminTab = tabId;
+      renderApp();
+    }
+
+    // --- Admin Tab 1: Classroom Dashboard ---
+    function renderAdminDashboardTab() {
+      const classrooms = ['ALL', ...Array.from(new Set(state.students.map(s => s.classroom))).sort()];
+      const filteredStudents = state.students.filter(s => {
+        const matchRoom = state.selectedClassroomFilter === 'ALL' || s.classroom === state.selectedClassroomFilter;
+        const q = state.studentSearchQuery.toLowerCase();
+        const matchSearch = !q || s.name.toLowerCase().includes(q) || s.username.toLowerCase().includes(q);
+        return matchRoom && matchSearch;
+      });
+
+      const totalQ = state.questions.length || 20;
+      const totalSt = filteredStudents.length;
+      const preDoneCount = filteredStudents.filter(s => s.preCompleted).length;
+      const postDoneCount = filteredStudents.filter(s => s.postCompleted).length;
+      const passedCount = filteredStudents.filter(s => s.postCompleted && s.postScore !== null && Math.round((s.postScore / totalQ) * 100) >= SCHOOL_INFO.passPercentage).length;
+
+      const preScores = filteredStudents.filter(s => s.preCompleted && s.preScore !== null).map(s => Number(s.preScore));
+      const postScores = filteredStudents.filter(s => s.postCompleted && s.postScore !== null).map(s => Number(s.postScore));
+      const avgPre = preScores.length ? (preScores.reduce((a, b) => a + b, 0) / preScores.length).toFixed(1) : '0.0';
+      const avgPost = postScores.length ? (postScores.reduce((a, b) => a + b, 0) / postScores.length).toFixed(1) : '0.0';
+
+      // Per-classroom summary table
+      const allRooms = Array.from(new Set(state.students.map(s => s.classroom))).sort();
+      const roomSummaries = allRooms.map(room => {
+        const list = state.students.filter(s => s.classroom === room);
+        const rPre = list.filter(s => s.preCompleted && s.preScore !== null).map(s => Number(s.preScore));
+        const rPost = list.filter(s => s.postCompleted && s.postScore !== null).map(s => Number(s.postScore));
+        const rPass = list.filter(s => s.postCompleted && s.postScore !== null && Math.round((s.postScore / totalQ) * 100) >= SCHOOL_INFO.passPercentage).length;
+        const mPre = rPre.length ? (rPre.reduce((a, b) => a + b, 0) / rPre.length) : 0;
+        const mPost = rPost.length ? (rPost.reduce((a, b) => a + b, 0) / rPost.length) : 0;
+        return {
+          room,
+          count: list.length,
+          avgPre: mPre.toFixed(1),
+          avgPost: mPost.toFixed(1),
+          diff: (mPost - mPre).toFixed(1),
+          passed: rPass,
+          passRate: list.length ? Math.round((rPass / list.length) * 100) : 0
+        };
+      });
+
+      return `
+        <div class="space-y-6">
+          <!-- Filter & Export Bar -->
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-sky-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold text-slate-600"><i class="fa-solid fa-filter mr-1 text-sky-500"></i> เลือกห้องเรียน:</span>
+              ${classrooms.map(r => `
+                <button onclick="setClassroomFilter('${escapeHtml(r)}')"
+                  class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${state.selectedClassroomFilter === r ? 'bg-sky-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+                  ${r === 'ALL' ? 'ทุกห้องเรียน' : escapeHtml(r)}
+                </button>
+              `).join('')}
+            </div>
+
+            <button onclick="exportResultsCSV()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-file-csv"></i>
+              <span>ส่งออกคะแนน Excel (CSV)</span>
+            </button>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-sky-100">
+              <p class="text-xs font-semibold text-slate-500">นักเรียนในกลุ่มที่เลือก</p>
+              <p class="text-3xl font-bold text-slate-900 mt-1">${totalSt} <span class="text-xs font-normal text-slate-400">คน</span></p>
+              <p class="text-xs text-sky-600 mt-2">ทำ Pre-test แล้ว ${preDoneCount} คน</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-sky-100">
+              <p class="text-xs font-semibold text-slate-500">คะแนนเฉลี่ยก่อนเรียน</p>
+              <p class="text-3xl font-bold text-indigo-600 mt-1">${avgPre} <span class="text-xs font-normal text-slate-400">/ ${totalQ}</span></p>
+              <p class="text-xs text-slate-500 mt-2">คิดเป็นร้อยละ ${Math.round((Number(avgPre)/totalQ)*100)}%</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-sky-100">
+              <p class="text-xs font-semibold text-slate-500">คะแนนเฉลี่ยหลังเรียน</p>
+              <p class="text-3xl font-bold text-sky-600 mt-1">${avgPost} <span class="text-xs font-normal text-slate-400">/ ${totalQ}</span></p>
+              <p class="text-xs text-emerald-600 mt-2">ส่ง Post-test แล้ว ${postDoneCount} คน</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-200 bg-gradient-to-br from-white to-emerald-50/50">
+              <p class="text-xs font-semibold text-emerald-800">ผ่านเกณฑ์ 80% (รับเกียรติบัตร)</p>
+              <p class="text-3xl font-bold text-emerald-600 mt-1">${passedCount} <span class="text-xs font-normal text-slate-500">/ ${totalSt} คน</span></p>
+              <p class="text-xs text-emerald-700 mt-2">คิดเป็น ${totalSt ? Math.round((passedCount/totalSt)*100) : 0}% ของนักเรียน</p>
+            </div>
+          </div>
+
+          <!-- Chart & Classroom Comparison Table -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-6 bg-white p-6 rounded-3xl shadow-sm border border-sky-100">
+              <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-column text-sky-500"></i>
+                <span>กราฟเปรียบเทียบคะแนนเฉลี่ยรายห้องเรียน</span>
+              </h3>
+              <div class="h-64">
+                <canvas id="classroom-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 bg-white p-6 rounded-3xl shadow-sm border border-sky-100">
+              <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-school text-sky-500"></i>
+                <span>ตารางสรุปผลสัมฤทธิ์รายห้องเรียน</span>
+              </h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                  <thead>
+                    <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                      <th class="py-2.5 px-3 font-bold">ห้องเรียน</th>
+                      <th class="py-2.5 px-3 font-bold text-center">นักเรียน</th>
+                      <th class="py-2.5 px-3 font-bold text-center">เฉลี่ย Pre</th>
+                      <th class="py-2.5 px-3 font-bold text-center">เฉลี่ย Post</th>
+                      <th class="py-2.5 px-3 font-bold text-center">ผ่านเกณฑ์ 80%</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    ${roomSummaries.map(r => `
+                      <tr class="hover:bg-sky-50/40">
+                        <td class="py-2.5 px-3 font-bold text-slate-800">${escapeHtml(r.room)}</td>
+                        <td class="py-2.5 px-3 text-center">${r.count} คน</td>
+                        <td class="py-2.5 px-3 text-center text-indigo-600 font-semibold">${r.avgPre}</td>
+                        <td class="py-2.5 px-3 text-center text-sky-600 font-bold">${r.avgPost}</td>
+                        <td class="py-2.5 px-3 text-center">
+                          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                            ${r.passed}/${r.count} (${r.passRate}%)
+                          </span>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Individual Student Progress & Case Study Review Table -->
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <h3 class="text-base font-bold text-slate-800">รายชื่อนักเรียนและผลการเรียนรายบุคคล</h3>
+              <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" value="${escapeHtml(state.studentSearchQuery)}" oninput="setStudentSearch(this.value)"
+                  placeholder="ค้นหาชื่อ หรือ รหัสนักเรียน..."
+                  class="w-full pl-8 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:border-sky-500 outline-none" />
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                    <th class="py-3 px-3 font-bold">รหัส</th>
+                    <th class="py-3 px-3 font-bold">ชื่อ-สกุล</th>
+                    <th class="py-3 px-3 font-bold">ห้อง</th>
+                    <th class="py-3 px-3 font-bold text-center">Pre-test</th>
+                    <th class="py-3 px-3 font-bold text-center">บทเรียน</th>
+                    <th class="py-3 px-3 font-bold text-center">Post-test</th>
+                    <th class="py-3 px-3 font-bold text-center">เกียรติบัตร</th>
+                    <th class="py-3 px-3 font-bold text-center">กรณีศึกษา</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${filteredStudents.map(st => {
+                    const postPct = st.postCompleted && st.postScore !== null ? Math.round((st.postScore / totalQ) * 100) : 0;
+                    const passed = st.postCompleted && postPct >= SCHOOL_INFO.passPercentage;
+                    return `
+                      <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-3 font-mono text-xs text-slate-600">${escapeHtml(st.username)}</td>
+                        <td class="py-3 px-3 font-semibold text-slate-800">${escapeHtml(st.name)}</td>
+                        <td class="py-3 px-3 text-slate-600">${escapeHtml(st.classroom)}</td>
+                        <td class="py-3 px-3 text-center">
+                          ${st.preCompleted ? `<span class="font-bold text-indigo-600">${st.preScore}/${totalQ}</span>` : '<span class="text-slate-400">-</span>'}
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                          <span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs">
+                            ${st.lessonsCompleted.length}/${state.lessons.length}
+                          </span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                          ${st.postCompleted ? `<span class="font-bold ${passed ? 'text-emerald-600' : 'text-rose-600'}">${st.postScore}/${totalQ} (${postPct}%)</span>` : '<span class="text-slate-400">-</span>'}
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                          ${passed
+                            ? '<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700"><i class="fa-solid fa-award mr-1"></i>ผ่าน</span>'
+                            : '<span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">ยังไม่ผ่าน</span>'}
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                          ${st.caseStudyAnswer
+                            ? `<button onclick="viewStudentCaseStudy('${escapeHtml(st.username)}')" class="px-2.5 py-1 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs font-semibold transition">อ่านคำตอบ</button>`
+                            : '<span class="text-xs text-slate-400">ยังไม่ส่ง</span>'}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setClassroomFilter(room) {
+      state.selectedClassroomFilter = room;
+      renderApp();
+    }
+
+    function setStudentSearch(val) {
+      state.studentSearchQuery = val;
+      renderApp();
+    }
+
+    function viewStudentCaseStudy(username) {
+      const st = state.students.find(s => s.username === username);
+      if (!st) return;
+      openModal(`
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+            <div>
+              <span class="text-xs font-bold text-purple-600">คำตอบกิจกรรมวิเคราะห์กรณีศึกษา</span>
+              <h3 class="text-lg font-bold text-slate-900">${escapeHtml(st.name)} (${escapeHtml(st.classroom)})</h3>
+            </div>
+            <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200 text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+            ${escapeHtml(st.caseStudyAnswer || 'ยังไม่มีคำตอบ')}
+          </div>
+          <div class="mt-5 text-right">
+            <button onclick="closeModal()" class="px-5 py-2 rounded-xl bg-slate-800 text-white text-xs font-bold">ปิดหน้าต่าง</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function renderClassroomChart() {
+      const canvas = document.getElementById('classroom-chart');
+      if (!canvas) return;
+      if (classroomChartInstance) {
+        classroomChartInstance.destroy();
+      }
+      const totalQ = state.questions.length || 20;
+      const rooms = Array.from(new Set(state.students.map(s => s.classroom))).sort();
+      const preAvgs = rooms.map(r => {
+        const list = state.students.filter(s => s.classroom === r && s.preCompleted && s.preScore !== null);
+        return list.length ? Number((list.reduce((a, b) => a + Number(b.preScore), 0) / list.length).toFixed(1)) : 0;
+      });
+      const postAvgs = rooms.map(r => {
+        const list = state.students.filter(s => s.classroom === r && s.postCompleted && s.postScore !== null);
+        return list.length ? Number((list.reduce((a, b) => a + Number(b.postScore), 0) / list.length).toFixed(1)) : 0;
+      });
+
+      classroomChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: rooms,
+          datasets: [
+            {
+              label: 'คะแนนเฉลี่ย Pre-test',
+              data: preAvgs,
+              backgroundColor: '#93C5FD',
+              borderRadius: 8
+            },
+            {
+              label: 'คะแนนเฉลี่ย Post-test',
+              data: postAvgs,
+              backgroundColor: '#0080FF',
+              borderRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: totalQ }
+          }
+        }
+      });
+    }
+
+    function exportResultsCSV() {
+      const totalQ = state.questions.length || 20;
+      const headers = ['รหัสนักเรียน', 'ชื่อ-สกุล', 'ห้องเรียน', 'คะแนน Pre-test', 'จำนวนบทเรียนที่จบ', 'คะแนน Post-test', 'ร้อยละ Post-test', 'สถานะเกียรติบัตร', 'วันที่ได้รับเกียรติบัตร'];
+      const rows = state.students.map(st => {
+        const pct = st.postCompleted && st.postScore !== null ? Math.round((st.postScore / totalQ) * 100) : 0;
+        const passed = st.postCompleted && pct >= SCHOOL_INFO.passPercentage ? 'ผ่านเกณฑ์' : 'ยังไม่ผ่าน';
+        return [
+          st.username,
+          st.name,
+          st.classroom,
+          st.preCompleted ? st.preScore : '-',
+          `${st.lessonsCompleted.length}/${state.lessons.length}`,
+          st.postCompleted ? st.postScore : '-',
+          st.postCompleted ? `${pct}%` : '-',
+          passed,
+          st.certDate || '-'
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+      });
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Animation_Scores_PBW_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('ส่งออกไฟล์ตารางคะแนน CSV สำเร็จ', 'success');
+    }
+
+    // --- Admin Tab 2: Manage Lessons ---
+    function renderAdminLessonsTab() {
+      return `
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">จัดการเนื้อหาบทเรียน</h3>
+              <p class="text-xs text-slate-500">ครูสามารถเพิ่มบทเรียนใหม่ แก้ไขเนื้อหา หรือปรับปรุงกิจกรรมกรณีศึกษาได้ทันที</p>
+            </div>
+            <button onclick="openLessonEditorModal(null)" style="background-color: #0080FF;" class="px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow hover:opacity-95 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i>
+              <span>เพิ่มบทเรียนใหม่</span>
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            ${state.lessons.map((l, idx) => `
+              <div class="p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-sky-300 transition">
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-bold text-sky-600">หน่วยที่ ${idx + 1}</span>
+                    <span class="text-xs text-slate-400">• ${escapeHtml(l.duration)}</span>
+                    ${l.isCaseStudy ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">กรณีศึกษา</span>' : ''}
+                  </div>
+                  <h4 class="font-bold text-slate-800 text-sm sm:text-base">${escapeHtml(l.title)}</h4>
+                  <p class="text-xs text-slate-500 mt-0.5">${escapeHtml(l.summary)}</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button onclick="openLessonEditorModal('${escapeHtml(l.id)}')" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold transition">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> แก้ไข
+                  </button>
+                  <button onclick="deleteLesson('${escapeHtml(l.id)}')" class="px-3.5 py-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold transition">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function openLessonEditorModal(lessonId) {
+      const existing = lessonId ? state.lessons.find(l => l.id === lessonId) : null;
+      const l = existing || {
+        id: String(Date.now()),
+        title: '',
+        subtitle: '',
+        duration: '20 นาที',
+        icon: 'fa-film',
+        summary: '',
+        contentHtml: '<h3>หัวข้อเนื้อหา</h3>\n<p>พิมพ์เนื้อหาบทเรียนที่นี่...</p>',
+        keyTakeaways: ['ประเด็นสำคัญข้อที่ 1'],
+        isCaseStudy: false,
+        caseStudyPrompt: ''
+      };
+
+      openModal(`
+        <form onsubmit="saveLessonFromModal(event, '${escapeHtml(l.id)}', ${Boolean(existing)})" class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <h3 class="text-lg font-bold text-slate-900">${existing ? 'แก้ไขบทเรียน' : 'เพิ่มบทเรียนใหม่'}</h3>
+            <button type="button" onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อหน่วยการเรียนรู้</label>
+              <input id="ed-lesson-title" type="text" required value="${escapeHtml(l.title)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">ระยะเวลาเรียน</label>
+              <input id="ed-lesson-duration" type="text" value="${escapeHtml(l.duration)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">คำอธิบายย่อย (Subtitle)</label>
+            <input id="ed-lesson-subtitle" type="text" value="${escapeHtml(l.subtitle)}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">สรุปย่อบทเรียน (แสดงหน้าแรก)</label>
+            <textarea id="ed-lesson-summary" rows="2" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm">${escapeHtml(l.summary)}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">เนื้อหาบทเรียน (รองรับ HTML เช่น &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;)</label>
+            <textarea id="ed-lesson-content" rows="6" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-mono">${escapeHtml(l.contentHtml)}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">สรุปประเด็นสำคัญ (บรรทัดละ 1 ข้อ)</label>
+            <textarea id="ed-lesson-takeaways" rows="3" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs">${escapeHtml((l.keyTakeaways || []).join('\n'))}</textarea>
+          </div>
+
+          <div class="p-3 rounded-xl bg-purple-50 border border-purple-200 space-y-2">
+            <label class="flex items-center gap-2 text-xs font-bold text-purple-900 cursor-pointer">
+              <input id="ed-lesson-iscase" type="checkbox" ${l.isCaseStudy ? 'checked' : ''} class="rounded text-purple-600" />
+              <span>เปิดใช้งานกล่องกิจกรรมวิเคราะห์กรณีศึกษาให้นักเรียนพิมพ์คำตอบ</span>
+            </label>
+            <input id="ed-lesson-prompt" type="text" value="${escapeHtml(l.caseStudyPrompt || '')}" placeholder="คำถามสำหรับกิจกรรมกรณีศึกษา..." class="w-full px-3 py-2 rounded-xl border border-purple-300 text-xs bg-white" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+            <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">ยกเลิก</button>
+            <button type="submit" style="background-color: #0080FF;" class="px-5 py-2 rounded-xl text-white text-xs font-bold shadow">บันทึกบทเรียน</button>
+          </div>
+        </form>
+      `);
+    }
+
+    async function saveLessonFromModal(e, id, isEdit) {
+      e.preventDefault();
+      const lessonObj = {
+        id,
+        title: document.getElementById('ed-lesson-title').value.trim(),
+        subtitle: document.getElementById('ed-lesson-subtitle').value.trim(),
+        duration: document.getElementById('ed-lesson-duration').value.trim() || '20 นาที',
+        icon: 'fa-film',
+        summary: document.getElementById('ed-lesson-summary').value.trim(),
+        contentHtml: document.getElementById('ed-lesson-content').value.trim(),
+        keyTakeaways: document.getElementById('ed-lesson-takeaways').value.split('\n').map(x => x.trim()).filter(Boolean),
+        isCaseStudy: document.getElementById('ed-lesson-iscase').checked,
+        caseStudyPrompt: document.getElementById('ed-lesson-prompt').value.trim()
+      };
+
+      if (isEdit) {
+        const idx = state.lessons.findIndex(x => x.id === id);
+        if (idx >= 0) state.lessons[idx] = lessonObj;
+      } else {
+        state.lessons.push(lessonObj);
+      }
+
+      saveLocalCache();
+      closeModal();
+      renderApp();
+      showToast('บันทึกข้อมูลบทเรียนเรียบร้อยแล้ว', 'success');
+      await postToGoogleSheets({ action: 'saveLesson', lesson: lessonObj }, true);
+    }
+
+    async function deleteLesson(id) {
+      if (!confirm('ยืนยันการลบบทเรียนนี้ใช่หรือไม่?')) return;
+      state.lessons = state.lessons.filter(l => l.id !== id);
+      saveLocalCache();
+      renderApp();
+      showToast('ลบบทเรียนเรียบร้อยแล้ว', 'info');
+      await postToGoogleSheets({ action: 'deleteLesson', id }, true);
+    }
+
+    // --- Admin Tab 3: Manage Questions ---
+    function renderAdminQuestionsTab() {
+      const letters = ['ก', 'ข', 'ค', 'ง'];
+      return `
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">คลังข้อสอบ Pre-test และ Post-test (${state.questions.length} ข้อ)</h3>
+              <p class="text-xs text-slate-500">ใช้ข้อสอบชุดเดียวกันทั้งก่อนเรียนและหลังเรียน โดยระบบจะสุ่มสลับข้อให้อัตโนมัติในรอบ Post-test</p>
+            </div>
+            <button onclick="openQuestionEditorModal(null)" style="background-color: #0080FF;" class="px-4 py-2.5 rounded-xl text-white text-xs font-bold shadow hover:opacity-95 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i>
+              <span>เพิ่มข้อสอบใหม่</span>
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            ${state.questions.map((q, idx) => `
+              <div class="p-4 rounded-2xl border border-slate-200 hover:border-sky-300 transition">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="space-y-2">
+                    <p class="font-bold text-slate-900 text-sm"><span class="text-sky-600">ข้อ ${idx + 1}.</span> ${escapeHtml(q.question)}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
+                      ${q.choices.map((ch, cIdx) => `
+                        <div class="px-3 py-1.5 rounded-lg ${cIdx === Number(q.correctIndex) ? 'bg-emerald-100 text-emerald-800 font-bold border border-emerald-300' : 'bg-slate-50 text-slate-600'}">
+                          ${letters[cIdx]}. ${escapeHtml(ch)} ${cIdx === Number(q.correctIndex) ? '✓' : ''}
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="openQuestionEditorModal('${escapeHtml(q.id)}')" class="p-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button onclick="deleteQuestion('${escapeHtml(q.id)}')" class="p-2 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function openQuestionEditorModal(qId) {
+      const existing = qId ? state.questions.find(q => q.id === qId) : null;
+      const q = existing || {
+        id: 'q' + Date.now(),
+        question: '',
+        choices: ['', '', '', ''],
+        correctIndex: 0,
+        explanation: ''
+      };
+
+      openModal(`
+        <form onsubmit="saveQuestionFromModal(event, '${escapeHtml(q.id)}', ${Boolean(existing)})" class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <h3 class="text-lg font-bold text-slate-900">${existing ? 'แก้ไขข้อสอบ' : 'เพิ่มข้อสอบใหม่'}</h3>
+            <button type="button" onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">โจทย์คำถาม</label>
+            <textarea id="ed-q-text" rows="2" required class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm">${escapeHtml(q.question)}</textarea>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-xs font-bold text-slate-700">ตัวเลือก (เลือกปุ่มวงกลมหน้าข้อที่ถูกต้อง)</label>
+            ${['ก', 'ข', 'ค', 'ง'].map((ltr, i) => `
+              <div class="flex items-center gap-2">
+                <input type="radio" name="ed-q-correct" value="${i}" ${Number(q.correctIndex) === i ? 'checked' : ''} class="w-4 h-4 text-emerald-600" />
+                <span class="text-xs font-bold w-5">${ltr}.</span>
+                <input id="ed-q-c${i}" type="text" required value="${escapeHtml(q.choices[i] || '')}" class="flex-1 px-3 py-2 rounded-xl border border-slate-300 text-xs" />
+              </div>
+            `).join('')}
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">คำอธิบายเฉลย (ไม่บังคับ)</label>
+            <input id="ed-q-exp" type="text" value="${escapeHtml(q.explanation || '')}" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+            <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">ยกเลิก</button>
+            <button type="submit" style="background-color: #0080FF;" class="px-5 py-2 rounded-xl text-white text-xs font-bold shadow">บันทึกข้อสอบ</button>
+          </div>
+        </form>
+      `);
+    }
+
+    async function saveQuestionFromModal(e, id, isEdit) {
+      e.preventDefault();
+      const correctRadio = document.querySelector('input[name="ed-q-correct"]:checked');
+      const qObj = {
+        id,
+        question: document.getElementById('ed-q-text').value.trim(),
+        choices: [
+          document.getElementById('ed-q-c0').value.trim(),
+          document.getElementById('ed-q-c1').value.trim(),
+          document.getElementById('ed-q-c2').value.trim(),
+          document.getElementById('ed-q-c3').value.trim()
+        ],
+        correctIndex: correctRadio ? Number(correctRadio.value) : 0,
+        explanation: document.getElementById('ed-q-exp').value.trim()
+      };
+
+      if (isEdit) {
+        const idx = state.questions.findIndex(x => x.id === id);
+        if (idx >= 0) state.questions[idx] = qObj;
+      } else {
+        state.questions.push(qObj);
+      }
+
+      saveLocalCache();
+      closeModal();
+      renderApp();
+      showToast('บันทึกข้อสอบเรียบร้อยแล้ว', 'success');
+      await postToGoogleSheets({ action: 'saveQuestion', question: qObj }, true);
+    }
+
+    async function deleteQuestion(id) {
+      if (!confirm('ยืนยันการลบข้อสอบข้อนี้ใช่หรือไม่?')) return;
+      state.questions = state.questions.filter(q => q.id !== id);
+      saveLocalCache();
+      renderApp();
+      showToast('ลบข้อสอบเรียบร้อยแล้ว', 'info');
+      await postToGoogleSheets({ action: 'deleteQuestion', id }, true);
+    }
+
+    // --- Admin Tab 4: Manage Students ---
+    function renderAdminStudentsTab() {
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Add Student Form -->
+          <div class="lg:col-span-4 space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100">
+              <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-user-plus text-sky-500"></i>
+                <span>เพิ่มบัญชีนักเรียนรายคน</span>
+              </h3>
+              <form onsubmit="handleAddStudent(event)" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">รหัสนักเรียน (Username)</label>
+                  <input id="new-st-user" type="text" required placeholder="เช่น 09356" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">รหัสผ่าน (Password)</label>
+                  <input id="new-st-pass" type="text" required value="1234" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">ชื่อ-นามสกุล</label>
+                  <input id="new-st-name" type="text" required placeholder="เช่น ด.ญ.ศศิธร ใจดี" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1">ห้องเรียน</label>
+                  <input id="new-st-room" type="text" required value="ม.3/1" placeholder="เช่น ม.3/1" class="w-full px-3 py-2 rounded-xl border border-slate-300 text-sm" />
+                </div>
+                <button type="submit" style="background-color: #0080FF;" class="w-full py-2.5 rounded-xl text-white text-xs font-bold shadow hover:opacity-95 transition">
+                  <i class="fa-solid fa-plus mr-1"></i> เพิ่มนักเรียนเข้าสู่ระบบ
+                </button>
+              </form>
+            </div>
+
+            <!-- Bulk Import -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-sky-100">
+              <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-file-import text-emerald-500"></i>
+                <span>นำเข้าหลายคนพร้อมกัน</span>
+              </h3>
+              <p class="text-xs text-slate-500 mb-3">พิมพ์ข้อมูลบรรทัดละ 1 คน รูปแบบ:<br/><code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700">รหัส, รหัสผ่าน, ชื่อ-สกุล, ห้องเรียน</code></p>
+              <textarea id="bulk-st-input" rows="4" placeholder="09356, 1234, ด.ช.กิตติพงศ์ ใจกล้า, ม.3/1&#10;67011, 1234, ด.ญ.นภัสสร งามตา, ม.3/2" class="w-full p-3 rounded-xl border border-slate-300 text-xs font-mono"></textarea>
+              <button type="button" onclick="handleBulkAddStudents()" class="mt-3 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition">
+                นำเข้ารายชื่อทั้งหมด
+              </button>
+            </div>
+          </div>
+
+          <!-- Student Accounts Table -->
+          <div class="lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-sky-100">
+            <h3 class="text-base font-bold text-slate-900 mb-4">บัญชีผู้เข้าเรียนทั้งหมด (${state.students.length} คน)</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                <thead>
+                  <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                    <th class="py-2.5 px-3 font-bold">Username</th>
+                    <th class="py-2.5 px-3 font-bold">Password</th>
+                    <th class="py-2.5 px-3 font-bold">ชื่อ-สกุล</th>
+                    <th class="py-2.5 px-3 font-bold">ห้องเรียน</th>
+                    <th class="py-2.5 px-3 font-bold text-center">จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${state.students.map(st => `
+                    <tr class="hover:bg-slate-50">
+                      <td class="py-2.5 px-3 font-mono font-semibold text-sky-700">${escapeHtml(st.username)}</td>
+                      <td class="py-2.5 px-3 font-mono text-slate-500">${escapeHtml(st.password)}</td>
+                      <td class="py-2.5 px-3 font-medium text-slate-800">${escapeHtml(st.name)}</td>
+                      <td class="py-2.5 px-3 text-slate-600">${escapeHtml(st.classroom)}</td>
+                      <td class="py-2.5 px-3 text-center space-x-1">
+                        <button onclick="resetStudentProgress('${escapeHtml(st.username)}')" title="รีเซ็ตคะแนนสอบ" class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-semibold">
+                          รีเซ็ตผลสอบ
+                        </button>
+                        <button onclick="deleteStudent('${escapeHtml(st.username)}')" title="ลบนักเรียน" class="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold">
+                          ลบ
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleAddStudent(e) {
+      e.preventDefault();
+      const username = document.getElementById('new-st-user').value.trim();
+      const password = document.getElementById('new-st-pass').value.trim();
+      const name = document.getElementById('new-st-name').value.trim();
+      const classroom = document.getElementById('new-st-room').value.trim();
+
+      if (state.students.some(s => s.username === username)) {
+        showToast('รหัสนักเรียนนี้มีอยู่ในระบบแล้ว', 'warning');
+        return;
+      }
+
+      const newSt = {
+        username,
+        password,
+        name,
+        classroom,
+        preScore: null,
+        preCompleted: false,
+        postScore: null,
+        postCompleted: false,
+        lessonsCompleted: [],
+        caseStudyAnswer: '',
+        certDate: ''
+      };
+
+      state.students.push(newSt);
+      saveLocalCache();
+      renderApp();
+      showToast(`เพิ่มนักเรียน ${name} เรียบร้อยแล้ว`, 'success');
+      await postToGoogleSheets({ action: 'saveStudent', student: newSt }, true);
+    }
+
+    async function handleBulkAddStudents() {
+      const raw = document.getElementById('bulk-st-input').value.trim();
+      if (!raw) return;
+      const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+      const added = [];
+
+      lines.forEach(line => {
+        const parts = line.split(',').map(p => p.trim());
+        if (parts.length >= 3 && parts[0]) {
+          const username = parts[0];
+          if (!state.students.some(s => s.username === username)) {
+            const st = {
+              username,
+              password: parts[1] || '1234',
+              name: parts[2],
+              classroom: parts[3] || 'ม.3/1',
+              preScore: null,
+              preCompleted: false,
+              postScore: null,
+              postCompleted: false,
+              lessonsCompleted: [],
+              caseStudyAnswer: '',
+              certDate: ''
+            };
+            state.students.push(st);
+            added.push(st);
+          }
+        }
+      });
+
+      if (added.length > 0) {
+        saveLocalCache();
+        renderApp();
+        showToast(`นำเข้าข้อมูลนักเรียนใหม่จำนวน ${added.length} คนสำเร็จ`, 'success');
+        await postToGoogleSheets({ action: 'bulkAddStudents', students: added }, true);
+      } else {
+        showToast('ไม่พบรายชื่อใหม่ที่สามารถนำเข้าได้ (รหัสอาจซ้ำหรือรูปแบบไม่ถูกต้อง)', 'warning');
+      }
+    }
+
+    async function resetStudentProgress(username) {
+      if (!confirm(`ต้องการรีเซ็ตคะแนนสอบและความก้าวหน้าของรหัส ${username} ใช่หรือไม่?`)) return;
+      const st = state.students.find(s => s.username === username);
+      if (!st) return;
+      st.preScore = null;
+      st.preCompleted = false;
+      st.postScore = null;
+      st.postCompleted = false;
+      st.lessonsCompleted = [];
+      st.caseStudyAnswer = '';
+      st.certDate = '';
+      saveLocalCache();
+      renderApp();
+      showToast('รีเซ็ตผลการเรียนเรียบร้อยแล้ว', 'info');
+      await postToGoogleSheets({ action: 'saveStudentProgress', student: st }, true);
+    }
+
+    async function deleteStudent(username) {
+      if (!confirm(`ยืนยันการลบบัญชีนักเรียนรหัส ${username} ใช่หรือไม่?`)) return;
+      state.students = state.students.filter(s => s.username !== username);
+      saveLocalCache();
+      renderApp();
+      showToast('ลบข้อมูลนักเรียนเรียบร้อยแล้ว', 'info');
+      await postToGoogleSheets({ action: 'deleteStudent', username }, true);
+    }
+
+    // --- Admin Tab 5: Google Sheets Connection ---
+    function renderAdminSheetsTab() {
+      return `
+        <div class="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-sky-100 space-y-6">
+          <div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">Google Apps Script Integration</span>
+            <h3 class="text-xl font-bold text-slate-900 mt-2">เชื่อมต่อฐานข้อมูล Google Sheets (ไฟล์ Code.gs)</h3>
+            <p class="text-sm text-slate-500 mt-1">
+              เมื่อเชื่อมต่อ Web App URL แล้ว ระบบจะบันทึกคะแนนสอบของนักเรียน บทเรียน และคลังข้อสอบลงใน Google Sheets ของครูแบบอัตโนมัติ
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <label class="block text-sm font-bold text-slate-800">Google Apps Script Web App URL:</label>
+            <input id="gas-url-input" type="url" value="${escapeHtml(state.gasUrl)}"
+              placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-sky-500 outline-none text-sm font-mono bg-white" />
+
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="saveAndTestGasUrl()" style="background-color: #0080FF;" class="px-5 py-2.5 rounded-xl text-white text-xs font-bold shadow hover:opacity-95 transition flex items-center gap-2">
+                <i class="fa-solid fa-plug-circle-check"></i>
+                <span>บันทึกและทดสอบการเชื่อมต่อ</span>
+              </button>
+
+              <button onclick="pushAllInitialDataToSheets()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow transition flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>ส่งข้อมูลเริ่มต้นทั้งหมดไปยัง Google Sheets</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Step-by-step Guide -->
+          <div class="space-y-3 text-sm text-slate-700">
+            <h4 class="font-bold text-slate-900 text-base">ขั้นตอนการติดตั้งไฟล์ Code.gs บน Google Sheets:</h4>
+            <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm leading-relaxed">
+              <li>เปิด Google Drive สร้างไฟล์ <strong>Google Sheets</strong> ใหม่ ตั้งชื่อตามต้องการ</li>
+              <li>ไปที่เมนูด้านบนเลือก <strong>ส่วนขยาย (Extensions) &gt; Apps Script</strong></li>
+              <li>ลบโค้ดเดิมในไฟล์ <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono">Code.gs</code> ทั้งหมด แล้วนำโค้ดจากไฟล์ <code class="bg-slate-100 px-1.5 py-0.5 rounded font-mono">Code.gs</code> ที่แยกไว้มาวางทับ กดบันทึก (Ctrl+S)</li>
+              <li>กดปุ่ม <strong>ทำให้ใช้งานได้ (Deploy) &gt; รายการใหม่ (New deployment)</strong> เลือกประเภทเป็น <strong>เว็บแอป (Web app)</strong></li>
+              <li>ตั้งค่าผู้มีสิทธิ์เข้าถึง (Who has access) เป็น <strong>ทุกคน (Anyone)</strong> แล้วกด Deploy</li>
+              <li>คัดลอก <strong>URL ของเว็บแอป</strong> มาวางในช่องด้านบน แล้วกด <strong>"บันทึกและทดสอบการเชื่อมต่อ"</strong> จากนั้นกดปุ่มสีเขียวเพื่อสร้างแท็บตาราง <code>Students</code>, <code>Lessons</code>, <code>Questions</code> อัตโนมัติ</li>
+              <li class="text-sky-700 font-medium"><strong>เคล็ดลับสำหรับเผยแพร่ให้นักเรียน:</strong> นำ URL ของเว็บแอปไปใส่ในตัวแปร <code>DEFAULT_GAS_URL</code> บรรทัดต้นๆ ของไฟล์ <code>index.html</code> ก่อนอัปโหลดขึ้นเว็บ นักเรียนทุกคนจะเชื่อมต่อฐานข้อมูลได้ทันทีโดยไม่ต้องกรอกลิงก์เอง</li>
+            </ol>
+          </div>
+        </div>
+      `;
+    }
+
+    async function saveAndTestGasUrl() {
+      const url = document.getElementById('gas-url-input').value.trim();
+      state.gasUrl = url;
+      localStorage.setItem(STORAGE_KEYS.GAS_URL, url);
+
+      if (!url) {
+        state.isConnected = false;
+        updateSyncBadge('offline', 'โหมดในเครื่อง (ยังไม่เชื่อม Sheets)');
+        showToast('ล้างค่า URL เรียบร้อยแล้ว', 'info');
+        return;
+      }
+
+      const ok = await syncFromGoogleSheets(false);
+      if (ok) {
+        showToast('เชื่อมต่อ Google Sheets สำเร็จ! พร้อมซิงค์ข้อมูลอัตโนมัติ', 'success');
+      }
+    }
+
+    async function pushAllInitialDataToSheets() {
+      if (!state.gasUrl) {
+        showToast('กรุณากรอกและบันทึก Web App URL ก่อนส่งข้อมูล', 'warning');
+        return;
+      }
+      if (!confirm('ระบบจะส่งข้อมูลนักเรียน บทเรียน และข้อสอบทั้งหมดขึ้นไปยัง Google Sheets (สร้างแท็บ Students, Lessons, Questions อัตโนมัติ) ยืนยันหรือไม่?')) {
+        return;
+      }
+      await postToGoogleSheets({
+        action: 'initDefaultData',
+        students: state.students,
+        lessons: state.lessons,
+        questions: state.questions,
+        force: true
+      }, false);
+    }
+  </script>
+</body>
+</html>
